@@ -16,5 +16,7 @@
     warp-terminal
     openssh
     rquickshare
+    zoxide
+    fzf
   ];
 }
