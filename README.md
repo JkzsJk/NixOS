@@ -8,6 +8,7 @@ Upcoming tasks:
   - [ ] Setup Home Manager
   - [ ] Jellyfin
   - [ ] Immich
+  - [ ] Terraform
   - [ ] Podman
   - [ ] Kubernetes
   - [ ] HomeLab
