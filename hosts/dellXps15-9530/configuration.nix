@@ -91,11 +91,7 @@
     enableRedistributableFirmware = true;
 
     # Intel HD Graphics 4600
-    opengl = {
-      enable = true;
-      driSupport = true;
-      driSupport32Bit = true;
-    };
+    graphics.enable = true;
 
     # NVIDIA GeForce GT 750M (Kepler) with Optimus
     nvidia = {
@@ -127,6 +123,7 @@
 
   # Thermal management and power optimization
   services.thermald.enable = true;
+  services.power-profiles-daemon.enable = false;  # Conflicts with TLP
   services.tlp = {
     enable = true;
     settings = {
