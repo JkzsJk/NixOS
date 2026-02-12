@@ -7,22 +7,7 @@
 
   # Enable experimental features (flakes and nix-command)
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
-
-  # Set Zsh as default shell for all users
-  users.defaultUserShell = pkgs.zsh;
-
-  # Set Vivaldi as default browser
-  environment.sessionVariables.BROWSER = "vivaldi";
-  xdg.mime.defaultApplications = {
-    "text/html" = "vivaldi-stable.desktop";
-    "x-scheme-handler/http" = "vivaldi-stable.desktop";
-    "x-scheme-handler/https" = "vivaldi-stable.desktop";
-    "x-scheme-handler/about" = "vivaldi-stable.desktop";
-    "x-scheme-handler/unknown" = "vivaldi-stable.desktop";
-  };
   
-  # Set Warp as default terminal
-  environment.sessionVariables.TERMINAL = "warp-terminal";
 
   # Common packages for all machines
   environment.systemPackages = with pkgs; [
@@ -43,8 +28,17 @@
     k9s
     cloudlens       # K9s like CLI for AWS and GCP
     starship        # Modern, fast shell prompt with powerline-like features
-
   ];
+
+  # Set Vivaldi as default browser
+  environment.sessionVariables.BROWSER = "vivaldi";
+  xdg.mime.defaultApplications = {
+    "text/html" = "vivaldi-stable.desktop";
+    "x-scheme-handler/http" = "vivaldi-stable.desktop";
+    "x-scheme-handler/https" = "vivaldi-stable.desktop";
+    "x-scheme-handler/about" = "vivaldi-stable.desktop";
+    "x-scheme-handler/unknown" = "vivaldi-stable.desktop";
+  };
 
   # Configure zoxide, fzf, and starship prompt for all shells
   programs.zsh = {
@@ -63,6 +57,9 @@
       eval "$(${pkgs.zoxide}/bin/zoxide init --cmd cd zsh)"
     '';
   };
+
+  # Set Zsh as default shell for all users
+  users.defaultUserShell = pkgs.zsh;
 
   programs.bash = {
     interactiveShellInit = ''
@@ -123,9 +120,20 @@
     # };
   };
 
-  # Home Manager configuration for all users
-  home-manager.sharedModules = [
-    {
+  home-manager.users = {
+    jason = { pkgs, ... }: {
+      home.packages = with pkgs; [
+        # User-specific packages can go here
+        btop
+      ];
+
+      # Set Vim as default text editor and Warp as default terminal
+      home.sessionVariables = {
+        EDITOR = "vim";
+        VISUAL = "vim";
+        TERMINAL = "warp-terminal";
+      };
+
       # Warp terminal configuration (applies to all users)
       home.file.".warp/launch_configurations/default.yaml".text = ''
         name: Default
@@ -138,6 +146,29 @@
         shell = "${pkgs.zsh}/bin/zsh";
       };
 
+      # Shell configuration
+      programs.zsh = {
+        enable = true;
+        enableCompletion = true;
+      };
+
+      programs.bash.enable = true;
+
+      # Git configuration
+      programs.git = {
+        enable = true;
+        userName = "JkzsJk";
+        userEmail = "jasonkhorzs@outlook.com";
+      };
+
+      # Home Manager state version
+      home.stateVersion = "25.11";
+    };
+  };
+
+  # Home Manager configuration for all users
+  home-manager.sharedModules = [
+    {
       # Starship prompt configuration
       home.file.".config/starship.toml".text = ''
         # Starship configuration - Powerline-inspired prompt
@@ -207,30 +238,4 @@
       '';
     }
   ];
-
-  home-manager.users = {
-    jason = { pkgs, ... }: {
-      home.packages = with pkgs; [
-        # User-specific packages can go here
-      ];
-
-      # Shell configuration
-      programs.zsh = {
-        enable = true;
-        enableCompletion = true;
-      };
-
-      programs.bash.enable = true;
-
-      # Git configuration
-      programs.git = {
-        enable = true;
-        userName = "JkzsJk";
-        userEmail = "jasonkhorzs@outlook.com";
-      };
-
-      # Home Manager state version
-      home.stateVersion = "25.11";
-    };
-  };
 }
