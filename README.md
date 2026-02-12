@@ -5,7 +5,7 @@ Learning my way around NixOS.
 Upcoming tasks:
   - [x] ZOXide
   - [x] fzf
-  - [ ] Setup Home Manager
+  - [ ] Setup Home Manager `[WIP]`
   - [ ] Jellyfin
   - [ ] Immich
   - [ ] Terraform
