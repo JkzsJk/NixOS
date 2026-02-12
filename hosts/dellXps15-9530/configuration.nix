@@ -113,10 +113,27 @@
         nvidiaBusId = "PCI:2:0:0";  # 02:00.0
       };
     };
-
-    # Touchpad support
-    trackpoint.enable = true;
   };
+
+  # Touchpad configuration
+  services.libinput = {
+    enable = true;
+    touchpad = {
+      tapping = true;
+      naturalScrolling = true;
+      disableWhileTyping = true;
+      accelSpeed = "0.5";
+    };
+  };
+
+  # Keyboard backlight persistence
+  services.upower.enable = true;
+  
+  # Dell keyboard backlight settings
+  boot.kernelModules = [ "dell-laptop" ];
+  boot.extraModprobeConfig = ''
+    options dell-laptop kbd_backlight=1
+  '';
 
   # Load NVIDIA driver for X11
   services.xserver.videoDrivers = [ "nvidia" ];
@@ -187,10 +204,6 @@
 
   # Install Firefox.
   programs.firefox.enable = true;
-
-  # Install Vivaldi.
-  ## The option `programs.vivaldi' does not exist.
-  ### programs.vivaldi.enable = true;
 
   # Allow unfree packages (also set in common.nix, but kept for clarity)
   nixpkgs.config.allowUnfree = true;
