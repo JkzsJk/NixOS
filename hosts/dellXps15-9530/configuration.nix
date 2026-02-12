@@ -215,6 +215,7 @@
   # Add machine-specific packages here if needed:
   environment.systemPackages = with pkgs; [
     spotify
+    telegram-desktop
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
