@@ -42,10 +42,11 @@
     pciutils        # lspci for hardware info
     k9s
     cloudlens       # K9s like CLI for AWS and GCP
+    starship        # Modern, fast shell prompt with powerline-like features
 
   ];
 
-  # Configure zoxide and fzf for all shells
+  # Configure zoxide, fzf, and starship prompt for all shells
   programs.zsh = {
     enable = true;
     enableCompletion = true;
@@ -53,6 +54,9 @@
       # Initialize fzf
       source ${pkgs.fzf}/share/fzf/completion.zsh
       source ${pkgs.fzf}/share/fzf/key-bindings.zsh
+      
+      # Initialize Starship prompt
+      eval "$(${pkgs.starship}/bin/starship init zsh)"
     '';
     promptInit = ''
       # Initialize zoxide with cd command override (must be last)
@@ -65,6 +69,9 @@
       # Initialize fzf
       source ${pkgs.fzf}/share/fzf/completion.bash
       source ${pkgs.fzf}/share/fzf/key-bindings.bash
+      
+      # Initialize Starship prompt
+      eval "$(${pkgs.starship}/bin/starship init bash)"
     '';
     promptInit = ''
       # Initialize zoxide with cd command override (must be last)
@@ -76,6 +83,9 @@
     interactiveShellInit = ''
       # Initialize fzf
       source ${pkgs.fzf}/share/fzf/key-bindings.fish
+      
+      # Initialize Starship prompt
+      ${pkgs.starship}/bin/starship init fish | source
     '';
     promptInit = ''
       # Initialize zoxide with cd command override (must be last)
@@ -127,6 +137,74 @@
         auto_update = true;
         shell = "${pkgs.zsh}/bin/zsh";
       };
+
+      # Starship prompt configuration
+      home.file.".config/starship.toml".text = ''
+        # Starship configuration - Powerline-inspired prompt
+        # Get editor completions based on the config schema
+        "$schema" = 'https://starship.rs/config-schema.json'
+
+        # Use a Powerline-style format with emojis
+        format = """
+        [╭─](bold green)$username$hostname$directory$git_branch$git_status$python$nodejs$rust$golang$java$docker_context
+        [╰─](bold green)$character"""
+
+        # Timeout for commands (in milliseconds)
+        command_timeout = 500
+
+        [character]
+        success_symbol = "[➜](bold green)"
+        error_symbol = "[✗](bold red)"
+
+        [username]
+        show_always = true
+        format = "[$user]($style)@"
+        style_user = "bold blue"
+
+        [hostname]
+        ssh_only = false
+        format = "[$hostname]($style) "
+        style = "bold blue"
+
+        [directory]
+        truncation_length = 3
+        truncate_to_repo = true
+        format = "[$path]($style)[$read_only]($read_only_style) "
+        style = "bold cyan"
+
+        [git_branch]
+        symbol = " "
+        format = "on [$symbol$branch]($style) "
+        style = "bold purple"
+
+        [git_status]
+        format = "([$all_status$ahead_behind]($style) )"
+        style = "bold red"
+
+        [python]
+        symbol = " "
+        format = "via [$symbol$version]($style) "
+
+        [nodejs]
+        symbol = " "
+        format = "via [$symbol$version]($style) "
+
+        [rust]
+        symbol = " "
+        format = "via [$symbol$version]($style) "
+
+        [golang]
+        symbol = " "
+        format = "via [$symbol$version]($style) "
+
+        [java]
+        symbol = " "
+        format = "via [$symbol$version]($style) "
+
+        [docker_context]
+        symbol = " "
+        format = "via [$symbol$context]($style) "
+      '';
     }
   ];
 

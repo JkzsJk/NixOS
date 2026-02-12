@@ -5,6 +5,7 @@ Learning my way around NixOS.
 Upcoming tasks:
   - [x] ZOXide
   - [x] fzf
+  - [ ] Default shell/Zsh with Powerline `[WIP]`
   - [ ] Setup Home Manager `[WIP]`
   - [ ] Jellyfin
   - [ ] Immich
