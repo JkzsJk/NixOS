@@ -3,9 +3,10 @@
 
 {
   imports = [
-    ./00-options.nix
-    ./01-service.nix
+    ./00-packages.nix
+    ./01-options.nix
     ./02-hardware.nix
     ./03-access.nix
+    ./04-service.nix
   ];
 }
