@@ -67,6 +67,14 @@
   # Enable the KDE Plasma Desktop Environment.
   services.displayManager.sddm.enable = true;
   services.desktopManager.plasma6.enable = true;
+  
+  # KDE Plasma customization packages
+  environment.systemPackages = with pkgs; [
+    # Theme dependencies
+    kdePackages.qtstyleplugin-kvantum
+    libsForQt5.qtstyleplugin-kvantum
+  ];
+  
   # KDE Plasma screen lock configuration, lock screen after 5 minutes of inactivity.
   environment.etc."xdg/kscreenlockerrc".text = ''
     [Daemon]
