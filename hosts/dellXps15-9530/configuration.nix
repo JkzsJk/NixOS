@@ -107,18 +107,15 @@
   ## The option `programs.vivaldi' does not exist.
   ### programs.vivaldi.enable = true;
 
-  # Allow unfree packages
+  # Allow unfree packages (also set in common.nix, but kept for clarity)
   nixpkgs.config.allowUnfree = true;
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
-  environment.systemPackages = with pkgs; [
-    vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-    wget
-    git
-    vivaldi
-    vscode
-  ];
+  # Host-specific packages defined in modules/common.nix
+  # Add machine-specific packages here if needed:
+  # environment.systemPackages = with pkgs; [
+  # ];
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
@@ -146,6 +143,4 @@
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "25.11"; # Did you read the comment?
-  system.autoUpgrade.enable = true;
-  system.autoUpgrade.allowReboot = false;
 }
