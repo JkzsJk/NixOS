@@ -123,8 +123,9 @@
   # $ nix search wget
   # Host-specific packages defined in modules/common.nix
   # Add machine-specific packages here if needed:
-  # environment.systemPackages = with pkgs; [
-  # ];
+  environment.systemPackages = with pkgs; [
+    spotify
+  ];
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
