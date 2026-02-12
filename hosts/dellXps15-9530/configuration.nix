@@ -8,7 +8,7 @@
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
-      ../../modules/common.nix
+      ../../modules/common
     ];
 
   # Bootloader.
@@ -223,7 +223,7 @@
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
-  # Host-specific packages defined in modules/common.nix
+  # Host-specific packages defined in modules/common
   # Machine-specific packages are defined above with systemPackages
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -243,7 +243,7 @@
   # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
-  networking.firewall.enable = false; # Default was false.
+  networking.firewall.enable = true;  # Keep firewall enabled for security
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
