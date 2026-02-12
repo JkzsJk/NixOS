@@ -194,6 +194,7 @@
 
   # Allow unfree packages (also set in common.nix, but kept for clarity)
   nixpkgs.config.allowUnfree = true;
+  nixpkgs.config.nvidia.acceptLicense = true;
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
