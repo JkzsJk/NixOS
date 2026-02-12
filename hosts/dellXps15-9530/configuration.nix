@@ -9,6 +9,7 @@
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
       ../../modules/00-common
+      ../../modules/01-jellyfin
     ];
 
   # Bootloader.
@@ -208,6 +209,8 @@
     isNormalUser = true;
     description = "Jason K.";
     extraGroups = [ "networkmanager" "wheel" ];
+    # Password managed imperatively with: sudo passwd jason
+    # Or use hashedPassword = "..." with output from: mkpasswd -m sha-512
     packages = with pkgs; [
       kdePackages.kate
     #  thunderbird
