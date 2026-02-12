@@ -1,5 +1,5 @@
-# Jellyfin media server module
-{ config, lib, pkgs, ... }:
+# Jellyfin module options
+{ config, lib, ... }:
 
 with lib;
 
@@ -11,6 +11,12 @@ with lib;
       type = types.bool;
       default = true;
       description = "Open firewall ports for Jellyfin (TCP 8096, 8920 and UDP 1900, 7359)";
+    };
+
+    dataDir = mkOption {
+      type = types.path;
+      default = "/var/lib/jellyfin";
+      description = "Directory for Jellyfin data storage";
     };
 
     hardwareAcceleration = {
@@ -39,12 +45,6 @@ with lib;
       };
     };
 
-    dataDir = mkOption {
-      type = types.path;
-      default = "/var/lib/jellyfin";
-      description = "Directory for Jellyfin data storage";
-    };
-
     mediaLibraries = mkOption {
       type = types.listOf types.path;
       default = [];
@@ -66,55 +66,14 @@ with lib;
     };
 
     watchUsername = mkOption {
-      type = types.str;
-      default = "jason";
+      type = types.nullOr types.str;
+      default = null;
+      example = "jason";
       description = ''
         Username whose directories Jellyfin should access.
         The jellyfin user will be added to this user's group for read access.
+        Required if watchDownloadsFolder is enabled or if using mediaLibraries.
       '';
     };
   };
-
-  config = mkIf config.myServices.jellyfin.enable (
-    let
-      cfg = config.myServices.jellyfin;
-      userHome = config.users.users.${cfg.watchUsername}.home;
-      downloadsFolder = "${userHome}/Downloads";
-      allMediaLibraries = cfg.mediaLibraries ++ (optional cfg.watchDownloadsFolder downloadsFolder);
-    in
-    {
-    # Enable official Jellyfin service
-    services.jellyfin = {
-      enable = true;
-      openFirewall = cfg.openFirewall;
-      dataDir = cfg.dataDir;
-      
-      # Configure hardware acceleration if enabled
-      hardwareAcceleration = mkIf cfg.hardwareAcceleration.enable {
-        enable = true;
-        type = cfg.hardwareAcceleration.type;
-        device = cfg.hardwareAcceleration.device;
-      };
-    };
-
-    # Add user to required groups for hardware acceleration
-    users.users.jellyfin = mkIf cfg.hardwareAcceleration.enable {
-      extraGroups = [ "video" "render" ];
-    };
-
-    # Grant Jellyfin access to user's media directories
-    users.users.jellyfin = mkIf (allMediaLibraries != []) {
-      extraGroups = [ cfg.watchUsername ];
-    };
-
-    # Set proper permissions on media directories
-    systemd.tmpfiles.rules = 
-      map (dir: "d ${dir} 0755 ${cfg.watchUsername} ${cfg.watchUsername} -") 
-      allMediaLibraries;
-
-    # Optional: Add Jellyfin utilities to system packages
-    environment.systemPackages = with pkgs; [
-      jellyfin-ffmpeg  # FFmpeg optimized for Jellyfin
-    ];
-  });
 }

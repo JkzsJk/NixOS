@@ -3,6 +3,9 @@
 
 {
   imports = [
-    ./01-jellyfin.nix
+    ./00-options.nix
+    ./01-service.nix
+    ./02-hardware.nix
+    ./03-access.nix
   ];
 }

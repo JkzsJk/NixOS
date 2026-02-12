@@ -2,6 +2,41 @@
 
 Custom Jellyfin media server module with hardware acceleration support.
 
+## Structure
+
+```
+01-jellyfin/
+  ├─ default.nix     - Entry point (imports all modules)
+  ├─ 00-options.nix  - Module options definitions
+  ├─ 01-service.nix  - Jellyfin service and packages
+  ├─ 02-hardware.nix - Hardware acceleration configuration
+  └─ 03-access.nix   - User permissions and media library access
+```
+
+## Modules
+
+### 00-options.nix
+- Defines all module options
+- Service configuration (enable, openFirewall, dataDir)
+- Hardware acceleration settings (type, device)
+- Media library options (mediaLibraries, watchDownloadsFolder, watchUsername)
+
+### 01-service.nix
+- Enables official Jellyfin service
+- Adds jellyfin-ffmpeg to system packages
+- Configures firewall and data directory
+
+### 02-hardware.nix
+- Hardware acceleration packages based on type (vaapi, nvenc, qsv, etc.)
+- Adds jellyfin user to video/render groups
+- Type-specific package selection
+
+### 03-access.nix
+- Media library access and permissions
+- Adds jellyfin user to watch user's group
+- Sets proper permissions on media directories
+- Assertions for configuration validation
+
 ## Usage
 
 ### Enable in host configuration:
@@ -23,8 +58,8 @@ myServices.jellyfin = {
 ```nix
 myServices.jellyfin = {
   enable = true;
-  watchDownloadsFolder = true;  # Auto-adds /home/jason/Downloads
-  watchUsername = "jason";
+  watchDownloadsFolder = true;  # Auto-adds ~/Downloads
+  watchUsername = "jason";  # Required when using media libraries
 };
 ```
 
@@ -77,7 +112,7 @@ myServices.jellyfin = {
 - `myServices.jellyfin.openFirewall` - Open firewall ports (default: true)
 - `myServices.jellyfin.dataDir` - Data directory (default: `/var/lib/jellyfin`)
 - `myServices.jellyfin.watchDownloadsFolder` - Auto-add user's Downloads folder (default: false)
-- `myServices.jellyfin.watchUsername` - Username for media access (default: `jason`)
+- `myServices.jellyfin.watchUsername` - Username for media access (default: `null`, required when using mediaLibraries)
 - `myServices.jellyfin.mediaLibraries` - List of custom media directories (default: `[]`)
   - **Configure per-host** in `hosts/yourhost/configuration.nix`
   - Dynamically uses the user's home directory
