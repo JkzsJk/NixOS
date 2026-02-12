@@ -30,8 +30,17 @@
   networking.networkmanager.enable = true;
 
   # Enable Bluetooth
-  hardware.bluetooth.enable   = true;
-  # services.blueman.enable     = true;
+  hardware.bluetooth = {
+    enable = true;
+    powerOnBoot = true;  # Enable bluetooth on boot
+    settings = {
+      General = {
+        Enable = "Source,Sink,Media,Socket";  # Audio profiles
+        Experimental = true;  # Better codec support
+      };
+    };
+  };
+  # services.blueman.enable = true;  # Bluetooth manager GUI
   # hardware.pulseaudio.enable  = true;
 
   # Set your time zone.
@@ -69,6 +78,71 @@
   # Power management: screen timeout
   powerManagement.enable = true;
 
+  # Hibernate after 1 hour of idle time
+  ## boot.resumeDevice = "/dev/disk/by-uuid/6d04062b-faa4-4a00-a053-0f532e24139d"; # Swap partition for hibernate
+  ## services.logind.extraConfig = ''
+  ##   IdleAction=hibernate
+  ##   IdleActionSec=1h
+  ## '';
+
+  # Dell XPS 15 9530 (2013) hardware configuration
+  hardware = {
+    # Enable all firmware (including WiFi/Bluetooth)
+    enableAllFirmware = true;
+    enableRedistributableFirmware = true;
+
+    # Intel HD Graphics 4600
+    opengl = {
+      enable = true;
+      driSupport = true;
+      driSupport32Bit = true;
+    };
+
+    # NVIDIA GeForce GT 750M (Kepler) with Optimus
+    nvidia = {
+      modesetting.enable = true;
+      powerManagement.enable = true;  # Better battery life
+      
+      # Legacy driver for Kepler architecture
+      package = config.boot.kernelPackages.nvidiaPackages.legacy_470;
+      
+      # NVIDIA Optimus PRIME configuration
+      prime = {
+        offload = {
+          enable = true;
+          enableOffloadCmd = true;
+        };
+        
+        # Bus IDs from lspci
+        intelBusId = "PCI:0:2:0";   # 00:02.0
+        nvidiaBusId = "PCI:2:0:0";  # 02:00.0
+      };
+    };
+
+    # Touchpad support
+    trackpoint.enable = true;
+  };
+
+  # Load NVIDIA driver for X11
+  services.xserver.videoDrivers = [ "nvidia" ];
+
+  # Thermal management and power optimization
+  services.thermald.enable = true;
+  services.tlp = {
+    enable = true;
+    settings = {
+      CPU_SCALING_GOVERNOR_ON_AC = "performance";
+      CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
+      
+      # Battery charge thresholds (80% rule)
+      START_CHARGE_THRESH_BAT0 = 75;
+      STOP_CHARGE_THRESH_BAT0 = 80;
+    };
+  };
+
+  # Dell firmware updates
+  services.fwupd.enable = true;
+
   # Configure keymap in X11
   services.xserver.xkb = {
     layout = "us";
@@ -78,18 +152,31 @@
   # Enable CUPS to print documents.
   services.printing.enable = true;
 
-  # Enable sound with pipewire.
-  # services.pulseaudio.enable = true;
   services.pulseaudio.enable = false;
   security.rtkit.enable = true;
+
+  # Enable sound with pipewire.
   services.pipewire = {
     enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
+    alsa = {
+      enable = true;
+      support32Bit = true;
+    };
     pulse.enable = true;
-    # If you want to use JACK applications, uncomment this
-    #jack.enable = true;
+    jack.enable = true;  # JACK support for pro audio
+    
+    # Low latency audio configuration
+    extraConfig.pipewire = {
+      "context.properties" = {
+        "default.clock.rate" = 48000;
+        "default.clock.quantum" = 1024;
+        "default.clock.min-quantum" = 512;
+      };
+    };
+  };
 
+  # Bluetooth audio support
+  hardware.pulseaudio.package = pkgs.pulseaudioFull
     # use the example session manager (no others are packaged yet so this is enabled by default,
     # no need to redefine it in your config for now)
     #media-session.enable = true;
