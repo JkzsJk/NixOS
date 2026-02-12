@@ -9,7 +9,7 @@ Learning my way around NixOS.
 
 | # | To Do | In Progress | Done |
 |---|-------|-------------|------|
-| 1 | Jellyfin | | ✅ ZOXide |
+| 1 | | 🚧 Jellyfin | ✅ ZOXide |
 | 2 | Immich | | ✅ fzf |
 | 3 | Terraform | | ✅ Default shell/Zsh with Powerline |
 | 4 | Podman | | ✅ Setup Home Manager |
