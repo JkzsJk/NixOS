@@ -68,11 +68,15 @@
   services.displayManager.sddm.enable = true;
   services.desktopManager.plasma6.enable = true;
   
-  # KDE Plasma customization packages
+  # KDE Plasma customization packages and machine-specific packages
   environment.systemPackages = with pkgs; [
     # Theme dependencies
     kdePackages.qtstyleplugin-kvantum
     libsForQt5.qtstyleplugin-kvantum
+    
+    # Machine-specific packages
+    spotify
+    telegram-desktop
   ];
   
   # KDE Plasma screen lock configuration, lock screen after 5 minutes of inactivity.
@@ -220,11 +224,7 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   # Host-specific packages defined in modules/common.nix
-  # Add machine-specific packages here if needed:
-  environment.systemPackages = with pkgs; [
-    spotify
-    telegram-desktop
-  ];
+  # Machine-specific packages are defined above with systemPackages
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
