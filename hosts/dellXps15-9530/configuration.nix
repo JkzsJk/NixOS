@@ -40,7 +40,7 @@
       };
     };
   };
-  # services.blueman.enable = true;  # Bluetooth manager GUI
+  services.blueman.enable = true;  # Bluetooth manager GUI
 
   # Set your time zone.
   time.timeZone = "Asia/Kuala_Lumpur";
