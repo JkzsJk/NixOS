@@ -41,7 +41,6 @@
     };
   };
   # services.blueman.enable = true;  # Bluetooth manager GUI
-  # hardware.pulseaudio.enable  = true;
 
   # Set your time zone.
   time.timeZone = "Asia/Kuala_Lumpur";
@@ -173,13 +172,6 @@
         "default.clock.min-quantum" = 512;
       };
     };
-  };
-
-  # Bluetooth audio support
-  hardware.pulseaudio.package = pkgs.pulseaudioFull
-    # use the example session manager (no others are packaged yet so this is enabled by default,
-    # no need to redefine it in your config for now)
-    #media-session.enable = true;
   };
 
   # Enable touchpad support (enabled default in most desktopManager).
