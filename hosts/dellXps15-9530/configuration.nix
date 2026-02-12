@@ -8,7 +8,7 @@
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
-      ../../modules/common
+      ../../modules/00-common
     ];
 
   # Bootloader.
@@ -217,13 +217,13 @@
   # Install Firefox.
   programs.firefox.enable = true;
 
-  # Allow unfree packages (also set in common.nix, but kept for clarity)
+  # Allow unfree packages (also set in 00-common, but kept for clarity)
   nixpkgs.config.allowUnfree = true;
   nixpkgs.config.nvidia.acceptLicense = true;
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
-  # Host-specific packages defined in modules/common
+  # Host-specific packages defined in modules/00-common
   # Machine-specific packages are defined above with systemPackages
 
   # Some programs need SUID wrappers, can be configured further or are

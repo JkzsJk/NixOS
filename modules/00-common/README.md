@@ -5,7 +5,7 @@ Shared configuration across all hosts.
 ## Structure
 
 ```
-common/
+00-common/
   ├─ default.nix   - Entry point (imports all modules)
   ├─ system.nix    - Nix configuration and auto-upgrades
   ├─ packages.nix  - Common system packages
