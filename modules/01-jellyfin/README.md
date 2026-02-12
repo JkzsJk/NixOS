@@ -7,24 +7,24 @@ Custom Jellyfin media server module with hardware acceleration support.
 ```
 01-jellyfin/
   ├─ default.nix     - Entry point (imports all modules)
-  ├─ 00-options.nix  - Module options definitions
-  ├─ 01-service.nix  - Jellyfin service and packages
+  ├─ 00-packages.nix - Jellyfin packages
+  ├─ 01-options.nix  - Module options definitions
   ├─ 02-hardware.nix - Hardware acceleration configuration
-  └─ 03-access.nix   - User permissions and media library access
+  ├─ 03-access.nix   - User permissions and media library access
+  └─ 04-service.nix  - Jellyfin service configuration
 ```
 
 ## Modules
 
-### 00-options.nix
+### 00-packages.nix
+- Adds jellyfin-ffmpeg to system packages
+- Provides optimized FFmpeg for transcoding
+
+### 01-options.nix
 - Defines all module options
 - Service configuration (enable, openFirewall, dataDir)
 - Hardware acceleration settings (type, device)
 - Media library options (mediaLibraries, watchDownloadsFolder, watchUsername)
-
-### 01-service.nix
-- Enables official Jellyfin service
-- Adds jellyfin-ffmpeg to system packages
-- Configures firewall and data directory
 
 ### 02-hardware.nix
 - Hardware acceleration packages based on type (vaapi, nvenc, qsv, etc.)
@@ -36,6 +36,11 @@ Custom Jellyfin media server module with hardware acceleration support.
 - Adds jellyfin user to watch user's group
 - Sets proper permissions on media directories
 - Assertions for configuration validation
+
+### 04-service.nix
+- Enables official Jellyfin service
+- Configures firewall and data directory
+- Manages service settings
 
 ## Usage
 
