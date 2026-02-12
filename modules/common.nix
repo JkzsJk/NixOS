@@ -26,33 +26,36 @@
     enable = true;
     enableCompletion = true;
     interactiveShellInit = ''
-      # Initialize zoxide with cd command override
-      eval "$(${pkgs.zoxide}/bin/zoxide init --cmd cd zsh)"
-      
       # Initialize fzf
       source ${pkgs.fzf}/share/fzf/completion.zsh
       source ${pkgs.fzf}/share/fzf/key-bindings.zsh
+    '';
+    promptInit = ''
+      # Initialize zoxide with cd command override (must be last)
+      eval "$(${pkgs.zoxide}/bin/zoxide init --cmd cd zsh)"
     '';
   };
 
   programs.bash = {
     interactiveShellInit = ''
-      # Initialize zoxide with cd command override
-      eval "$(${pkgs.zoxide}/bin/zoxide init --cmd cd bash)"
-      
       # Initialize fzf
       source ${pkgs.fzf}/share/fzf/completion.bash
       source ${pkgs.fzf}/share/fzf/key-bindings.bash
+    '';
+    promptInit = ''
+      # Initialize zoxide with cd command override (must be last)
+      eval "$(${pkgs.zoxide}/bin/zoxide init --cmd cd bash)"
     '';
   };
 
   programs.fish = {
     interactiveShellInit = ''
-      # Initialize zoxide with cd command override
-      ${pkgs.zoxide}/bin/zoxide init --cmd cd fish | source
-      
       # Initialize fzf
       source ${pkgs.fzf}/share/fzf/key-bindings.fish
+    '';
+    promptInit = ''
+      # Initialize zoxide with cd command override (must be last)
+      ${pkgs.zoxide}/bin/zoxide init --cmd cd fish | source
     '';
   };
 
