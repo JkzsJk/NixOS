@@ -147,7 +147,7 @@
       # Git configuration
       programs.git = {
         enable = true;
-        userName = "Jason K.";
+        userName = "JkzsJk";
         userEmail = "jasonkhorzs@outlook.com";
       };
 
