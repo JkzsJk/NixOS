@@ -39,7 +39,10 @@
     zoxide
     fzf
     home-manager
-    pciutils  # lspci for hardware info
+    pciutils        # lspci for hardware info
+    k9s
+    cloudlens       # K9s like CLI for AWS and GCP
+
   ];
 
   # Configure zoxide and fzf for all shells
@@ -108,5 +111,48 @@
     ##   lower = "01:00";
     ##   upper = "05:00";
     # };
+  };
+
+  # Home Manager configuration for all users
+  home-manager.sharedModules = [
+    {
+      # Warp terminal configuration (applies to all users)
+      home.file.".warp/launch_configurations/default.yaml".text = ''
+        name: Default
+        shell:
+          program: ${pkgs.zsh}/bin/zsh
+      '';
+
+      home.file.".warp/user_preferences.json".text = builtins.toJSON {
+        auto_update = true;
+        shell = "${pkgs.zsh}/bin/zsh";
+      };
+    }
+  ];
+
+  home-manager.users = {
+    jason = { pkgs, ... }: {
+      home.packages = with pkgs; [
+        # User-specific packages can go here
+      ];
+
+      # Shell configuration
+      programs.zsh = {
+        enable = true;
+        enableCompletion = true;
+      };
+
+      programs.bash.enable = true;
+
+      # Git configuration
+      programs.git = {
+        enable = true;
+        userName = "Jason K.";
+        userEmail = "jasonkhorzs@outlook.com";
+      };
+
+      # Home Manager state version
+      home.stateVersion = "25.11";
+    };
   };
 }
