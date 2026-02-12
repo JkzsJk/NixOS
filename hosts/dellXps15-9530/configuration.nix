@@ -69,13 +69,6 @@
   # Power management: screen timeout
   powerManagement.enable = true;
 
-  # Hibernate after 1 hour of idle time
-  boot.resumeDevice = "/dev/disk/by-uuid/6d04062b-faa4-4a00-a053-0f532e24139d"; # Swap partition for hibernate
-  services.logind.extraConfig = ''
-    IdleAction=hibernate
-    IdleActionSec=1h
-  '';
-
   # Configure keymap in X11
   services.xserver.xkb = {
     layout = "us";
