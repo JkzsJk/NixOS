@@ -3,8 +3,8 @@ Learning my way around NixOS.
 
 ## To-Do's
 Upcoming tasks:
-  - [ ] ZOXide
-  - [ ] fzf
+  - [x] ZOXide
+  - [x] fzf
   - [ ] Setup Home Manager
   - [ ] Jellyfin
   - [ ] Immich
