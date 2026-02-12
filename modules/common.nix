@@ -19,6 +19,7 @@
     rquickshare
     zoxide
     fzf
+    home-manager
   ];
 
   # Configure zoxide and fzf for all shells
