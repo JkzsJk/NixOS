@@ -9,19 +9,29 @@ Learning my way around NixOS.
 
 {| class="wikitable"
 |-
-! &#35; !! To Do !! In Progress !! Done
+! &#35; !! Task !! Status !! Remarks
 |-
-| 1 || Immich || 🚧 Jellyfin || ✅ ZOXide
+| 1 || Home Manager || 🚧 In Progress || Need modular user management structure, likely to be separated out into its own module.
 |-
-| 2 || Terraform || &nbsp; || ✅ fzf
+| 2 || Immich || To Do || &nbsp;
 |-
-| 3 || Podman || &nbsp; || ✅ Default shell/Zsh with Powerline
+| 3 || Terraform || To Do || &nbsp;
 |-
-| 4 || Kubernetes || &nbsp; || ✅ Setup Home Manager
+| 4 || Podman || To Do || &nbsp;
 |-
-| 5 || HomeLab || &nbsp; || &nbsp;
+| 5 || Kubernetes || To Do || &nbsp;
 |-
-| 6 || .dotfiles || &nbsp; || &nbsp;
+| 6 || HomeLab || To Do || &nbsp;
+|-
+| 7 || .dotfiles || To Do || &nbsp;
+|-
+| 8 || Jellyfin || ✅ Done || &nbsp;
+|-
+| 9 || ZOXide || ✅ Done || &nbsp;
+|-
+| 10 || fzf || ✅ Done || &nbsp;
+|-
+| 11 || Default shell/Zsh with Powerline || ✅ Done || &nbsp;
 |}
 
 == References ==
