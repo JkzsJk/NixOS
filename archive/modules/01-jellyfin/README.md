@@ -33,8 +33,9 @@ Custom Jellyfin media server module with hardware acceleration support.
 
 ### 03-access.nix
 - Media library access and permissions
-- Adds jellyfin user to watch user's group
-- Sets proper permissions on media directories
+- Creates dedicated `media` group for secure access
+- Adds jellyfin user and configured user to `media` group
+- Sets proper permissions (0770) on media directories for multi-user write access
 - Assertions for configuration validation
 
 ### 04-service.nix
@@ -282,10 +283,63 @@ To access Jellyfin from outside your home network:
 - **UDP 1900** - Service discovery
 - **UDP 7359** - Client discovery
 
+## Security
+
+### Media Group Architecture
+
+The module uses a dedicated `media` group for secure, multi-user media access:
+
+- **Jellyfin service user**: Read-only access to media files
+- **Media group members**: Read/write access to `/mnt/media` (0770 permissions)
+- **Non-members**: No access
+
+### Adding Users to Media Group
+
+```nix
+# In hosts/yourhost/configuration.nix
+users.users.jason = {
+  isNormalUser = true;
+  extraGroups = [ "networkmanager" "wheel" "media" ];
+};
+
+users.users.alice = {
+  isNormalUser = true;
+  extraGroups = [ "media" ];  # Can add/delete media files
+};
+```
+
+### Recommended Media Storage
+
+**Location:** `/mnt/media/`
+```bash
+sudo mkdir -p /mnt/media/{movies,tv-shows,music,photos}
+```
+
+**Configuration:**
+```nix
+myServices.jellyfin = {
+  enable = true;
+  watchUsername = "jason";
+  mediaLibraries = [
+    "/mnt/media/movies"
+    "/mnt/media/tv-shows"
+    "/mnt/media/music"
+  ];
+};
+```
+
+**Permissions:** Set automatically by module (owner:media, 0770)
+
+**Why not Downloads?**
+- Temporary workspace, not permanent storage
+- Mixed content types
+- No organizational structure
+
 ## Features
 
 - ✅ Automatic firewall configuration
 - ✅ Hardware acceleration support (VA-API, NVENC, QSV, AMF)
 - ✅ Proper user permissions for GPU access
+- ✅ Secure multi-user media access via dedicated `media` group
 - ✅ Optimized FFmpeg for transcoding
 - ✅ Configurable data directory

@@ -10,8 +10,9 @@ let
   hasMediaLibraries = cfg.mediaLibraries != [];
   needsUserAccess = hasMediaLibraries || cfg.watchDownloadsFolder;
   
-  # Media directory permissions
-  mediaDirPerms = "0755";
+  # Media directory permissions: owner rwx, group rwx, others none
+  # Allows all media group members to read/write/execute
+  mediaDirPerms = "0770";
   
   # Only evaluate user details when actually needed
   userConfig = optionalAttrs needsUserAccess {
@@ -37,12 +38,15 @@ in
       }
     ];
 
-    # Add jellyfin user to the watch user's group for media access
-    users.users.jellyfin.extraGroups = [ cfg.watchUsername ];
+    # Create dedicated media group for secure media access
+    users.groups.media = {
+      members = [ "jellyfin" cfg.watchUsername ];
+    };
 
     # Set proper permissions on media directories
+    # Directories owned by user, but group is 'media' for shared access
     systemd.tmpfiles.rules = 
-      map (dir: "d ${dir} ${mediaDirPerms} ${cfg.watchUsername} ${cfg.watchUsername} -") 
+      map (dir: "d ${dir} ${mediaDirPerms} ${cfg.watchUsername} media -") 
       allMediaLibraries;
   };
 }

@@ -208,7 +208,7 @@
   users.users.jason = {
     isNormalUser = true;
     description = "Jason K.";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel" "media" ];
     # Password managed imperatively with: sudo passwd jason
     # Or use hashedPassword = "..." with output from: mkpasswd -m sha-512
     packages = with pkgs; [
