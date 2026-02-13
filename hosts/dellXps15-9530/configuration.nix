@@ -14,6 +14,7 @@
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
+  boot.loader.systemd-boot.consoleMode = "max";  # Use highest resolution available
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.timeout = 5; # Wait max 5 seconds before selecting latest revision
 

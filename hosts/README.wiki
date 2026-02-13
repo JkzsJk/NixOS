@@ -30,6 +30,8 @@ First experimental HomeLab machine.
 * Thermal management with thermald
 * Dell keyboard backlight persistence
 * Custom power profiles for AC/Battery
+* Bootloader high-DPI mode (readable on 1920x1080+ displays)
+* Jellyfin media server with secure multi-user access
 
 == Adding a New Host ==
 

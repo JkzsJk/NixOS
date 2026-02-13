@@ -6,12 +6,13 @@ Shared configuration across all hosts.
 
 <pre>
 00-common/
-  ├─ default.nix      - Entry point (imports all modules)
-  ├─ 01-packages.nix  - Common system packages
-  ├─ 02-shell.nix     - Shell configurations (zsh, bash, fish)
-  ├─ 03-system.nix    - Nix configuration and auto-upgrades
-  ├─ 04-users.nix     - Home Manager user configurations
-  └─ 05-vivaldi.nix   - Default browser is Vivaldi & its configuration
+  ├─ default.nix        - Entry point (imports all modules)
+  ├─ 01-packages.nix    - Common system packages
+  ├─ 02-shell.nix       - Shell configurations (zsh, bash, fish)
+  ├─ 03-system.nix      - Nix configuration and auto-upgrades
+  ├─ 04-users.nix       - Home Manager user configurations
+  ├─ 05-vivaldi.nix     - Default browser is Vivaldi & its configuration
+  └─ 06-rquickshare.nix - RQuickShare file sharing configuration
 </pre>
 
 == Modules ==
@@ -33,7 +34,11 @@ Shared configuration across all hosts.
 === 03-system.nix ===
 * Enables unfree packages
 * Configures Nix experimental features (flakes, nix-command)
-* Sets up automatic system upgrades
+* Automatic system upgrades:
+** Daily updates at 04:00
+** Updates nixpkgs channel
+** Auto-commits flake lock file
+** Runs missed upgrades on boot
 
 === 04-users.nix ===
 * Home Manager configuration for user <code>jason</code>
@@ -46,3 +51,8 @@ Shared configuration across all hosts.
 === 05-vivaldi.nix ===
 * Sets Vivaldi as default browser
 * Configures XDG MIME associations for web protocols
+
+=== 06-rquickshare.nix ===
+* Wraps RQuickShare with <code>WEBKIT_DISABLE_COMPOSITING_MODE=1</code>
+* Opens firewall ports for local network file sharing
+* Enables mDNS for device discovery

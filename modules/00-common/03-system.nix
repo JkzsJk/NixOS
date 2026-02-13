@@ -22,4 +22,5 @@
     
     # randomizedDelaySec = "1h";      # Optional: Add random delay
     persistent = true;              # Run missed upgrades after boot
+  };
 }

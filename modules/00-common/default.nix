@@ -8,5 +8,6 @@
     ./03-system.nix
     ./04-users.nix
     ./05-vivaldi.nix
+    ./06-rquickshare.nix
   ];
 }
