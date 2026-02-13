@@ -39,8 +39,12 @@
       # Git configuration
       programs.git = {
         enable = true;
-        userName = "JkzsJk";
-        userEmail = "jasonkhorzs@outlook.com";
+        settings = {
+          user = {
+            name = "JkzsJk";
+            email = "jasonkhorzs@outlook.com";
+          };
+        };
       };
 
       # Home Manager state version

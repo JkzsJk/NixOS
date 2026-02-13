@@ -4,6 +4,7 @@
 let
   rquicksharePort = 65535;  # Maximum available port number
 in
+
 {
   # Wrap rquickshare with environment variable
   nixpkgs.config.packageOverrides = pkgs: {
@@ -21,8 +22,11 @@ in
   # Configure static port for RQuickShare (per-user config)
   home-manager.sharedModules = [
     {
-      home.file.".local/share/dev.mandre.rquickshare/.settings.json".text = builtins.toJSON {
-        port = rquicksharePort;
+      home.file.".local/share/dev.mandre.rquickshare/.settings.json" = {
+        text = builtins.toJSON {
+          port = rquicksharePort;
+        };
+        force = true;  # Overwrite existing settings file
       };
     }
   ];
