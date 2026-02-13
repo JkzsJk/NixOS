@@ -14,7 +14,7 @@
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
-  boot.loader.systemd-boot.consoleMode = "1920x1080";  # Specific resolution for readable text
+  boot.loader.systemd-boot.consoleMode = "max";  # Use highest resolution available
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.timeout = 4; # Wait max 4 seconds before selecting latest revision
 
@@ -263,6 +263,7 @@
     openFirewall = true;  # Opens ports 8096, 8920, 1900, 7359
     watchUsername = "jason";  # Grant access to jason's files
     watchDownloadsFolder = true;  # Monitor Downloads folder
+    mediaLibraries = [ "/home/jason/media" ];  # Dedicated media folder
   };
 
   # Open ports in the firewall.
