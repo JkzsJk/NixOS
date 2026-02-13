@@ -1,0 +1,29 @@
+= NixOS =
+Learning my way around NixOS.
+
+== Table of Contents ==
+# [[#to-dos|To-Do's]]
+# [[#references|References]]
+
+== To-Do's ==
+
+{| class="wikitable"
+|-
+! &#35; !! To Do !! In Progress !! Done
+|-
+| 1 || Immich || 🚧 Jellyfin || ✅ ZOXide
+|-
+| 2 || Terraform || &nbsp; || ✅ fzf
+|-
+| 3 || Podman || &nbsp; || ✅ Default shell/Zsh with Powerline
+|-
+| 4 || Kubernetes || &nbsp; || ✅ Setup Home Manager
+|-
+| 5 || HomeLab || &nbsp; || &nbsp;
+|-
+| 6 || .dotfiles || &nbsp; || &nbsp;
+|}
+
+== References ==
+Guidance which I try to follow as best practice:
+# [https://github.com/MatthiasBenaets/nix-config/tree/master MatthiasBenaets/nix-config: My Personal Nix, NixOS and Nix-Darwin System Configuration Flake]

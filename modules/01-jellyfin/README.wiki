@@ -1,0 +1,282 @@
+= Jellyfin Module =
+
+Custom Jellyfin media server module with hardware acceleration support.
+
+== Structure ==
+
+<pre>
+01-jellyfin/
+  ├─ default.nix     - Entry point (imports all modules)
+  ├─ 00-packages.nix - Jellyfin packages
+  ├─ 01-options.nix  - Module options definitions
+  ├─ 02-hardware.nix - Hardware acceleration configuration
+  ├─ 03-access.nix   - User permissions and media library access
+  └─ 04-service.nix  - Jellyfin service configuration
+</pre>
+
+== Modules ==
+
+=== 00-packages.nix ===
+* Adds jellyfin-ffmpeg to system packages
+* Provides optimized FFmpeg for transcoding
+
+=== 01-options.nix ===
+* Defines all module options
+* Service configuration (enable, openFirewall, dataDir)
+* Hardware acceleration settings (type, device)
+* Media library options (mediaLibraries, watchDownloadsFolder, watchUsername)
+
+=== 02-hardware.nix ===
+* Hardware acceleration packages based on type (vaapi, nvenc, qsv, etc.)
+* Adds jellyfin user to video/render groups
+* Type-specific package selection
+
+=== 03-access.nix ===
+* Media library access and permissions
+* Adds jellyfin user to watch user's group
+* Sets proper permissions on media directories
+* Assertions for configuration validation
+
+=== 04-service.nix ===
+* Enables official Jellyfin service
+* Configures firewall and data directory
+* Manages service settings
+
+== Usage ==
+
+=== Enable in host configuration: ===
+
+<source lang="nix">
+imports = [
+  ../../modules/01-jellyfin
+];
+
+myServices.jellyfin = {
+  enable = true;
+  openFirewall = true;  # Default: true
+  dataDir = "/var/lib/jellyfin";  # Default
+};
+</source>
+
+=== Watch Downloads folder for media: ===
+
+<source lang="nix">
+myServices.jellyfin = {
+  enable = true;
+  watchDownloadsFolder = true;  # Auto-adds ~/Downloads
+  watchUsername = "jason";  # Required when using media libraries
+};
+</source>
+
+=== Custom media directories (per-host): ===
+
+<source lang="nix">
+# In hosts/yourhost/configuration.nix
+myServices.jellyfin = {
+  enable = true;
+  watchUsername = "differentuser";
+  mediaLibraries = [
+    "/mnt/nas/Movies"
+    "/mnt/nas/TV"
+    "/home/differentuser/Videos"
+  ];
+};
+</source>
+
+This configuration is '''host-specific''' - configure different paths for each machine.
+
+=== With hardware acceleration (Intel): ===
+
+<source lang="nix">
+myServices.jellyfin = {
+  enable = true;
+  hardwareAcceleration = {
+    enable = true;
+    type = "vaapi";  # or "qsv" for Quick Sync
+    device = "/dev/dri/renderD128";
+  };
+};
+</source>
+
+=== With hardware acceleration (NVIDIA): ===
+
+<source lang="nix">
+myServices.jellyfin = {
+  enable = true;
+  hardwareAcceleration = {
+    enable = true;
+    type = "nvenc";
+    device = null;  # Not needed for NVIDIA
+  };
+};
+</source>
+
+== Options ==
+
+* <code>myServices.jellyfin.enable</code> - Enable Jellyfin media server
+* <code>myServices.jellyfin.openFirewall</code> - Open firewall ports (default: true)
+* <code>myServices.jellyfin.dataDir</code> - Data directory (default: <code>/var/lib/jellyfin</code>)
+* <code>myServices.jellyfin.watchDownloadsFolder</code> - Auto-add user's Downloads folder (default: false)
+* <code>myServices.jellyfin.watchUsername</code> - Username for media access (default: <code>null</code>, required when using mediaLibraries)
+* <code>myServices.jellyfin.mediaLibraries</code> - List of custom media directories (default: <code>[]</code>)
+** '''Configure per-host''' in <code>hosts/yourhost/configuration.nix</code>
+** Dynamically uses the user's home directory
+* <code>myServices.jellyfin.hardwareAcceleration.enable</code> - Enable hardware transcoding
+* <code>myServices.jellyfin.hardwareAcceleration.type</code> - Acceleration type: <code>vaapi</code>, <code>nvenc</code>, <code>qsv</code>, <code>amf</code>, <code>v4l2m2m</code>, <code>rkmpp</code>
+* <code>myServices.jellyfin.hardwareAcceleration.device</code> - Device path (default: <code>/dev/dri/renderD128</code>)
+
+== Setting Up Media Libraries ==
+
+=== Quick Start (Downloads Folder) ===
+
+# '''Enable in your host configuration:'''
+#: <source lang="nix">
+#: myServices.jellyfin = {
+#:   enable = true;
+#:   watchDownloadsFolder = true;
+#: };
+#: </source>
+# '''Rebuild and access:''' <code>http://localhost:8096</code>
+# '''In Jellyfin web UI:'''
+#* Complete initial setup
+#* '''Dashboard''' → '''Libraries''' → '''Add Media Library'''
+#* Path: <code>/home/jason/Downloads</code> (or check user's actual home directory)
+
+=== Per-Host Custom Paths ===
+
+'''Server 1''' (Desktop with NAS):
+<source lang="nix">
+# hosts/desktop/configuration.nix
+myServices.jellyfin = {
+  enable = true;
+  mediaLibraries = [ "/mnt/nas/media" "/home/mainuser/Downloads" ];
+  watchUsername = "mainuser";
+};
+</source>
+
+'''Server 2''' (Laptop):
+<source lang="nix">
+# hosts/laptop/configuration.nix  
+myServices.jellyfin = {
+  enable = true;
+  watchDownloadsFolder = true;
+  watchUsername = "laptopuser";
+};
+</source>
+
+Each host automatically uses the correct user's home directory.
+
+== Setting Up Media Libraries (old) ==
+
+After enabling Jellyfin with media directories:
+
+# '''Access Jellyfin web interface:''' <code>http://localhost:8096</code>
+# '''Complete initial setup wizard'''
+# '''Add Media Library:'''
+#* Click '''Dashboard''' → '''Libraries''' → '''Add Media Library'''
+#* '''Content type:''' Movies, TV Shows, Music, etc.
+#* '''Folders:''' Click '''+''' and enter: <code>/home/jason/Downloads</code>
+#* Click '''OK'''
+# '''Download media to your folder:'''
+#: <source lang="bash">
+#: # Example: Download a movie to ~/Downloads
+#: cd ~/Downloads
+#: wget https://example.com/movie.mp4
+#: </source>
+# '''Jellyfin will automatically scan and add it to your library'''
+
+=== Tips: ===
+* Organize by subfolders: <code>Downloads/Movies</code>, <code>Downloads/TV</code>, etc.
+* Use proper file naming for better metadata matching
+* Jellyfin rescans periodically, or manually trigger: '''Dashboard''' → '''Scheduled Tasks''' → '''Scan Media Libraries'''
+
+== Options (old, removing) ==
+* <code>myServices.jellyfin.dataDir</code> - Data directory (default: <code>/var/lib/jellyfin</code>)
+* <code>myServices.jellyfin.hardwareAcceleration.enable</code> - Enable hardware transcoding
+* <code>myServices.jellyfin.hardwareAcceleration.type</code> - Acceleration type: <code>vaapi</code>, <code>nvenc</code>, <code>qsv</code>, <code>amf</code>, <code>v4l2m2m</code>, <code>rkmpp</code>
+* <code>myServices.jellyfin.hardwareAcceleration.device</code> - Device path (default: <code>/dev/dri/renderD128</code>)
+
+== Access ==
+
+After enabling, Jellyfin will be accessible at:
+* '''Web Interface:''' http://localhost:8096
+
+== Client Connection Guide ==
+
+=== Same WiFi / Local Network ===
+
+When your client device is on the same network as the Jellyfin server:
+
+# '''Find your server's IP address:'''
+#: <source lang="bash">
+#: # On the server, run:
+#: hostname -I
+#: # Or: ip addr show
+#: </source>
+# '''Connect from client:'''
+#* '''URL:''' <code>http://<SERVER-IP>:8096</code>
+#* '''Example:''' <code>http://192.168.1.100:8096</code>
+# '''Automatic discovery:'''
+#* If <code>openFirewall = true</code>, Jellyfin broadcasts via UDP (ports 1900, 7359)
+#* Mobile apps can auto-discover the server on the same network
+#* Just open the Jellyfin app and it should find your server
+
+=== External Network / Public WiFi / Remote Access ===
+
+To access Jellyfin from outside your home network:
+
+==== Option 1: Port Forwarding (Simple but less secure) ====
+
+# '''Setup port forwarding on your router:'''
+#* Forward external port 8096 → internal <code><SERVER-IP>:8096</code>
+#* Get your public IP: <code>curl ifconfig.me</code>
+# '''Connect from anywhere:'''
+#* '''URL:''' <code>http://<YOUR-PUBLIC-IP>:8096</code>
+#* ⚠️ '''Security warning:''' This exposes your server to the internet
+
+==== Option 2: VPN (Recommended) ====
+
+# '''Setup WireGuard or Tailscale VPN''' on your NixOS server
+# '''Connect client to VPN''' when away from home
+# '''Access via local IP''' as if you're on the same network: <code>http://192.168.1.100:8096</code>
+# ✅ '''Secure:''' Traffic is encrypted, server not exposed
+
+==== Option 3: Reverse Proxy with HTTPS (Most secure, requires domain) ====
+
+# '''Setup Caddy/Nginx''' with SSL certificate
+# '''Use domain name:''' <code>https://jellyfin.yourdomain.com</code>
+# ✅ '''Secure:''' Encrypted traffic, proper authentication
+# Configure in NixOS:
+#: <source lang="nix">
+#: services.caddy = {
+#:   enable = true;
+#:   virtualHosts."jellyfin.yourdomain.com".extraConfig = ''
+#:     reverse_proxy localhost:8096
+#:   '';
+#: };
+#: </source>
+
+=== Recommended Setup ===
+
+'''For home use:'''
+* Local network: Direct connection <code>http://192.168.1.100:8096</code>
+* Remote access: Use VPN (WireGuard/Tailscale)
+
+'''For sharing with friends/family:'''
+* Use reverse proxy with HTTPS and strong authentication
+* Consider Jellyfin's user management and parental controls
+
+== Ports ==
+
+* '''TCP 8096''' - HTTP web interface
+* '''TCP 8920''' - HTTPS web interface
+* '''UDP 1900''' - Service discovery
+* '''UDP 7359''' - Client discovery
+
+== Features ==
+
+* ✅ Automatic firewall configuration
+* ✅ Hardware acceleration support (VA-API, NVENC, QSV, AMF)
+* ✅ Proper user permissions for GPU access
+* ✅ Optimized FFmpeg for transcoding
+* ✅ Configurable data directory

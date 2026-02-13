@@ -1,0 +1,40 @@
+= Hosts =
+
+Host-specific configurations for each machine.
+
+== Structure ==
+
+<pre>
+hosts/
+  └─ dellXps15-9530/
+      ├─ configuration.nix          - Machine-specific configuration
+      └─ hardware-configuration.nix - Hardware scan results
+</pre>
+
+== Machines ==
+
+=== Dell XPS 15 (9530) - Late 2013 - <code>dellXps15-9530</code> ===
+
+First experimental HomeLab machine.
+
+'''Specifications:'''
+* CPU: Intel Core i7-4702HQ (Haswell)
+* GPU: Intel HD Graphics 4600 + NVIDIA GeForce GT 750M (Optimus)
+* Display: 15.6" (with touchpad support)
+* Desktop: KDE Plasma 6
+* Purpose: HomeLab experimentation
+
+'''Features:'''
+* NVIDIA Optimus with legacy driver (470.x for Kepler)
+* TLP battery optimization (80% charge threshold)
+* Thermal management with thermald
+* Dell keyboard backlight persistence
+* Custom power profiles for AC/Battery
+
+== Adding a New Host ==
+
+# Create a new directory under <code>hosts/</code> with the hostname
+# Generate hardware configuration: <code>nixos-generate-config --dir ./hosts/<hostname></code>
+# Create <code>configuration.nix</code> with machine-specific settings
+# Add the host to <code>flake.nix</code> in <code>nixosConfigurations</code>
+# Import common modules as needed
