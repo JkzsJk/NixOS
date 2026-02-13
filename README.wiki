@@ -13,25 +13,27 @@ Learning my way around NixOS.
 |-
 | 1 || Home Manager || 🚧 In Progress || Need modular user management structure, likely to be separated out into its own module.
 |-
-| 2 || Immich || To Do || &nbsp;
+| 2 || RQuickShare || To Do || Seems not working, lack more configuration definitely.
 |-
-| 3 || Terraform || To Do || &nbsp;
+| 3 || Immich || To Do || &nbsp;
 |-
-| 4 || Podman || To Do || &nbsp;
+| 4 || Terraform || To Do || &nbsp;
 |-
-| 5 || Kubernetes || To Do || &nbsp;
+| 5 || Podman || To Do || &nbsp;
 |-
-| 6 || HomeLab || To Do || &nbsp;
+| 6 || Kubernetes || To Do || &nbsp;
 |-
-| 7 || .dotfiles || To Do || &nbsp;
+| 7 || HomeLab || To Do || &nbsp;
 |-
-| 8 || Jellyfin || ✅ Done || &nbsp;
+| 8 || .dotfiles || To Do || &nbsp;
 |-
-| 9 || ZOXide || ✅ Done || &nbsp;
+| 9 || Jellyfin || ✅ Done || &nbsp;
 |-
-| 10 || fzf || ✅ Done || &nbsp;
+| 10 || ZOXide || ✅ Done || &nbsp;
 |-
-| 11 || Default shell/Zsh with Powerline || ✅ Done || &nbsp;
+| 11 || fzf || ✅ Done || &nbsp;
+|-
+| 12 || Default shell/Zsh with Powerline || ✅ Done || &nbsp;
 |}
 
 == References ==
