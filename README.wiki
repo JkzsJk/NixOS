@@ -39,3 +39,4 @@ Learning my way around NixOS.
 == References ==
 Guidance which I try to follow as best practice:
 # [https://github.com/MatthiasBenaets/nix-config/tree/master MatthiasBenaets/nix-config: My Personal Nix, NixOS and Nix-Darwin System Configuration Flake]
+# [https://nixos-and-flakes.thiscute.world: NixOS & Flakes Book | Home Page]

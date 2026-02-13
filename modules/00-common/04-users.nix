@@ -24,7 +24,7 @@
       '';
 
       home.file.".warp/user_preferences.json".text = builtins.toJSON {
-        auto_update = true;
+        auto_update = false; # Disable because it's just how Nix works.
         shell = "${pkgs.zsh}/bin/zsh";
       };
 
