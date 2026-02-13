@@ -1,6 +1,9 @@
 # RQuickShare configuration
 { config, pkgs, lib, ... }:
 
+let
+  rquicksharePort = 65535;  # Maximum available port number
+in
 {
   # Wrap rquickshare with environment variable
   nixpkgs.config.packageOverrides = pkgs: {
@@ -15,18 +18,22 @@
     };
   };
 
+  # Configure static port for RQuickShare (per-user config)
+  home-manager.sharedModules = [
+    {
+      home.file.".local/share/dev.mandre.rquickshare/.settings.json".text = builtins.toJSON {
+        port = rquicksharePort;
+      };
+    }
+  ];
+
   # Open firewall ports for RQuickShare
   networking.firewall = {
     allowedTCPPorts = [ 
-      19550  # RQuickShare web interface
+      rquicksharePort  # RQuickShare with static port
     ];
     allowedUDPPorts = [ 
       5353   # mDNS for device discovery
-    ];
-    
-    # Allow mDNS for local network discovery
-    allowedUDPPortRanges = [
-      { from = 5353; to = 5353; }
     ];
   };
 }

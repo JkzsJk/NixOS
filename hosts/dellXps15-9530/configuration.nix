@@ -14,9 +14,9 @@
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
-  boot.loader.systemd-boot.consoleMode = "max";  # Use highest resolution available
+  boot.loader.systemd-boot.consoleMode = "1920x1080";  # Specific resolution for readable text
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.loader.timeout = 5; # Wait max 5 seconds before selecting latest revision
+  boot.loader.timeout = 4; # Wait max 4 seconds before selecting latest revision
 
   # Use latest kernel.
   boot.kernelPackages = pkgs.linuxPackages_latest;
@@ -217,7 +217,21 @@
     #  thunderbird
     ];
   };
+  # Allow jason to run nixos-rebuild and nix commands without sudo password
+  security.sudo.extraRules = [
+    {
+      users = [ "jason" ];    # Add users here, e.g. users = [ "jason" "alice" "bob" ];
+      commands = [
+        {
+          command = "${pkgs.nixos-rebuild}/bin/nixos-rebuild";
+          options = [ "NOPASSWD" ];
+        }
+      ];
+    }
+  ];
 
+  # Trust jason for nix daemon operations
+  nix.settings.trusted-users = [ "root" "jason" ];
   # Install Firefox.
   programs.firefox.enable = true;
 
