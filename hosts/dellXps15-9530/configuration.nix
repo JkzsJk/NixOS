@@ -261,9 +261,8 @@
   myServices.jellyfin = {
     enable = true;
     openFirewall = true;  # Opens ports 8096, 8920, 1900, 7359
-    watchUsername = "jason";  # Grant access to jason's files
-    watchDownloadsFolder = true;  # Monitor Downloads folder
-    mediaLibraries = [ "/home/jason/media" ];  # Dedicated media folder
+    watchUsername = "jason";  # User who manages media files
+    mediaLibraries = [ "/srv/media" ];  # System media directory (FHS compliant)
   };
 
   # Open ports in the firewall.

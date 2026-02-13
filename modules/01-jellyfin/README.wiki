@@ -69,22 +69,22 @@ myServices.jellyfin = {
 };
 </source>
 
-=== Custom media directories (per-host): ===
+=== System media directories: ===
 
 <source lang="nix">
 # In hosts/yourhost/configuration.nix
 myServices.jellyfin = {
   enable = true;
-  watchUsername = "differentuser";
+  watchUsername = "jason";
   mediaLibraries = [
-    "/mnt/nas/Movies"
-    "/mnt/nas/TV"
-    "/home/differentuser/Videos"
+    "/srv/media/movies"
+    "/srv/media/tv-shows"
+    "/srv/media/music"
   ];
 };
 </source>
 
-This configuration is '''host-specific''' - configure different paths for each machine.
+'''Note:''' Use system directories (<code>/srv/media</code>, <code>/mnt/nas</code>) for <code>mediaLibraries</code>. For home directories, use <code>watchDownloadsFolder</code> option instead.
 
 === With hardware acceleration (Intel): ===
 
@@ -128,20 +128,38 @@ myServices.jellyfin = {
 
 == Setting Up Media Libraries ==
 
-=== Quick Start (Downloads Folder) ===
+=== Recommended: System Directory ===
+
+# '''Enable in your host configuration:'''
+#: <source lang="nix">
+#: myServices.jellyfin = {
+#:   enable = true;
+#:   watchUsername = "jason";
+#:   mediaLibraries = [ "/srv/media" ];
+#: };
+#: </source>
+# '''Rebuild system:''' <code>sudo nixos-rebuild switch</code>
+# '''Access Jellyfin:''' <code>http://localhost:8096</code>
+# '''In Jellyfin web UI:'''
+#* Complete initial setup
+#* '''Dashboard''' → '''Libraries''' → '''Add Media Library'''
+#* Path: <code>/srv/media</code>
+
+=== Alternative: Downloads Folder ===
 
 # '''Enable in your host configuration:'''
 #: <source lang="nix">
 #: myServices.jellyfin = {
 #:   enable = true;
 #:   watchDownloadsFolder = true;
+#:   watchUsername = "jason";
 #: };
 #: </source>
 # '''Rebuild and access:''' <code>http://localhost:8096</code>
 # '''In Jellyfin web UI:'''
 #* Complete initial setup
 #* '''Dashboard''' → '''Libraries''' → '''Add Media Library'''
-#* Path: <code>/home/jason/Downloads</code> (or check user's actual home directory)
+#* Path: <code>/home/jason/Downloads</code>
 
 === Per-Host Custom Paths ===
 
@@ -150,52 +168,51 @@ myServices.jellyfin = {
 # hosts/desktop/configuration.nix
 myServices.jellyfin = {
   enable = true;
-  mediaLibraries = [ "/mnt/nas/media" "/home/mainuser/Downloads" ];
+  mediaLibraries = [ "/mnt/nas/movies" "/mnt/nas/tv" ];
   watchUsername = "mainuser";
 };
 </source>
 
-'''Server 2''' (Laptop):
+'''Server 2''' (Laptop with local storage):
 <source lang="nix">
 # hosts/laptop/configuration.nix  
 myServices.jellyfin = {
   enable = true;
-  watchDownloadsFolder = true;
+  mediaLibraries = [ "/srv/media" ];
   watchUsername = "laptopuser";
 };
 </source>
 
-Each host automatically uses the correct user's home directory.
+'''Server 3''' (Using Downloads folder):
+<source lang="nix">
+# hosts/other/configuration.nix  
+myServices.jellyfin = {
+  enable = true;
+  watchDownloadsFolder = true;  # Special handling for ~/Downloads
+  watchUsername = "someuser";
+};
+</source>
 
-== Setting Up Media Libraries (old) ==
+Each host can use different storage locations.
 
-After enabling Jellyfin with media directories:
+=== Adding Media Files ===
 
-# '''Access Jellyfin web interface:''' <code>http://localhost:8096</code>
-# '''Complete initial setup wizard'''
-# '''Add Media Library:'''
-#* Click '''Dashboard''' → '''Libraries''' → '''Add Media Library'''
-#* '''Content type:''' Movies, TV Shows, Music, etc.
-#* '''Folders:''' Click '''+''' and enter: <code>/home/jason/Downloads</code>
-#* Click '''OK'''
-# '''Download media to your folder:'''
-#: <source lang="bash">
-#: # Example: Download a movie to ~/Downloads
-#: cd ~/Downloads
-#: wget https://example.com/movie.mp4
-#: </source>
-# '''Jellyfin will automatically scan and add it to your library'''
+<source lang="bash">
+# Copy/move media to the directory
+sudo cp ~/Downloads/movie.mp4 /srv/media/
+
+# Or organize by type
+sudo mkdir -p /srv/media/{movies,tv-shows,music}
+sudo cp movie.mp4 /srv/media/movies/
+
+# Set proper ownership (done automatically by tmpfiles, but for manual files)
+sudo chown jason:media /srv/media/movies/movie.mp4
+</source>
 
 === Tips: ===
-* Organize by subfolders: <code>Downloads/Movies</code>, <code>Downloads/TV</code>, etc.
+* Organize by subfolders: <code>/srv/media/movies</code>, <code>/srv/media/tv-shows</code>, etc.
 * Use proper file naming for better metadata matching
 * Jellyfin rescans periodically, or manually trigger: '''Dashboard''' → '''Scheduled Tasks''' → '''Scan Media Libraries'''
-
-== Options (old, removing) ==
-* <code>myServices.jellyfin.dataDir</code> - Data directory (default: <code>/var/lib/jellyfin</code>)
-* <code>myServices.jellyfin.hardwareAcceleration.enable</code> - Enable hardware transcoding
-* <code>myServices.jellyfin.hardwareAcceleration.type</code> - Acceleration type: <code>vaapi</code>, <code>nvenc</code>, <code>qsv</code>, <code>amf</code>, <code>v4l2m2m</code>, <code>rkmpp</code>
-* <code>myServices.jellyfin.hardwareAcceleration.device</code> - Device path (default: <code>/dev/dri/renderD128</code>)
 
 == Access ==
 
@@ -301,30 +318,45 @@ users.users.alice = {
 
 === Recommended Media Storage ===
 
-'''Location:''' <code>/mnt/media/</code>
-<source lang="bash">
-sudo mkdir -p /mnt/media/{movies,tv-shows,music,photos}
-</source>
+'''Location:''' <code>/srv/media/</code>
+
+'''Why <code>/srv/media</code>?'''
+* Follows Filesystem Hierarchy Standard (FHS)
+* Designed for service data (served by Jellyfin)
+* Separate from user home directories (better security)
+* Clear system-wide purpose
 
 '''Configuration:'''
 <source lang="nix">
 myServices.jellyfin = {
   enable = true;
   watchUsername = "jason";
-  mediaLibraries = [
-    "/mnt/media/movies"
-    "/mnt/media/tv-shows"
-    "/mnt/media/music"
-  ];
+  mediaLibraries = [ "/srv/media" ];
 };
 </source>
 
-'''Permissions:''' Set automatically by module (owner:media, 0770)
+'''Permissions:''' Set automatically by module (jason:media, 0770)
+* Owner (jason): Read/write/execute
+* Group (media, includes jellyfin): Read/write/execute  
+* Others: No access
 
-'''Why not Downloads?'''
-* Temporary workspace, not permanent storage
-* Mixed content types
-* No organizational structure
+'''Organization:'''
+<source lang="bash">
+# Automatically created on rebuild, or manually:
+sudo mkdir -p /srv/media/{movies,tv-shows,music,photos}
+sudo chown -R jason:media /srv/media
+sudo chmod -R 770 /srv/media
+</source>
+
+'''Alternative: NAS/External Storage'''
+* Use <code>/mnt/nas/media</code> for network-attached storage
+* Same permissions apply (user:media, 0770)
+
+'''Why not home directories (<code>/home/user</code>)?'''
+* Home directories are private by default
+* Services can't traverse without opening security holes
+* Use <code>watchDownloadsFolder</code> for special Downloads access
+* Keep permanent media in system directories
 
 == Features ==
 
