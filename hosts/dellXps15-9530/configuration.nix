@@ -242,6 +242,14 @@
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
 
+  # Enable Jellyfin media server
+  myServices.jellyfin = {
+    enable = true;
+    openFirewall = true;  # Opens ports 8096, 8920, 1900, 7359
+    watchUsername = "jason";  # Grant access to jason's files
+    watchDownloadsFolder = true;  # Monitor Downloads folder
+  };
+
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];
