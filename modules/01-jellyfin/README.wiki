@@ -51,6 +51,7 @@ Custom Jellyfin media server module with hardware acceleration support.
 imports = [
   ../../modules/01-jellyfin
 ];
+</source>
 
 myServices.jellyfin = {
   enable = true;
@@ -309,6 +310,7 @@ users.users.jason = {
   isNormalUser = true;
   extraGroups = [ "networkmanager" "wheel" "media" ];
 };
+</source>
 
 users.users.alice = {
   isNormalUser = true;
