@@ -90,11 +90,11 @@
 
   # Prevent sleep/suspend/hibernate - keep Jellyfin and other services running
   # Screen will still blank and lock after 5 minutes (configured in kscreenlockerrc above)
-  services.logind = {
-    lidSwitch = "ignore";
-    lidSwitchExternalPower = "ignore";
-    suspendKey = "ignore";
-    hibernateKey = "ignore";
+  services.logind.settings.Login = {
+    HandleLidSwitch = "ignore";
+    HandleLidSwitchExternalPower = "ignore";
+    HandleSuspendKey = "ignore";
+    HandleHibernateKey = "ignore";
   };
 
   powerManagement.enable = true;

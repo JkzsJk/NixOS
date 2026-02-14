@@ -60,10 +60,11 @@ Shared configuration across all hosts.
 
 === 06-rquickshare.nix ===
 * Wraps RQuickShare with <code>WEBKIT_DISABLE_COMPOSITING_MODE=1</code>
-* Configures static port (65535) via Home Manager
+* Configures static port (65535)
 * Auto-creates settings file for all users
 * Opens firewall ports for local network file sharing (TCP 65535, UDP 5353)
 * Enables mDNS for device discovery
+* Received files go directly into <code>/home</code>, i.e. <code>downloadPath = "${config.home.homeDirectory}/Downloads";</code> isn't working currently
 
 === 07-localsend.nix ===
 * Installs LocalSend for cross-platform file transfers
