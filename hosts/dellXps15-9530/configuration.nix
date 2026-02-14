@@ -97,7 +97,6 @@
     hibernateKey = "ignore";
   };
 
-  # Power management: Keep services running (HomeLab use case)
   powerManagement.enable = true;
 
   # Hibernate after 1 hour of idle time
