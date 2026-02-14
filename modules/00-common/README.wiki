@@ -12,7 +12,8 @@ Shared configuration across all hosts.
   ├─ 03-system.nix      - Nix configuration and auto-upgrades
   ├─ 04-users.nix       - Home Manager user configurations
   ├─ 05-vivaldi.nix     - Default browser is Vivaldi & its configuration
-  └─ 06-rquickshare.nix - RQuickShare file sharing configuration
+  ├─ 06-rquickshare.nix - RQuickShare file sharing configuration
+  └─ 07-localsend.nix   - LocalSend file transfer configuration
 </pre>
 
 == Modules ==
@@ -39,6 +40,11 @@ Shared configuration across all hosts.
 ** Updates nixpkgs channel
 ** Auto-commits flake lock file
 ** Runs missed upgrades on boot
+* Automatic garbage collection:
+** Runs every 14 days
+** Deletes generations older than 14 days
+** Keeps maximum 10 boot generations
+* Automatic store optimization (runs daily)
 
 === 04-users.nix ===
 * Home Manager configuration for user <code>jason</code>
@@ -58,3 +64,8 @@ Shared configuration across all hosts.
 * Auto-creates settings file for all users
 * Opens firewall ports for local network file sharing (TCP 65535, UDP 5353)
 * Enables mDNS for device discovery
+
+=== 07-localsend.nix ===
+* Installs LocalSend for cross-platform file transfers
+* Opens firewall ports (TCP/UDP 53317)
+* Enables multicast discovery on local network
