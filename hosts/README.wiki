@@ -33,6 +33,7 @@ First experimental HomeLab machine.
 * Bootloader console mode set to 1920x1080 for readable text on 3200x1800 display
 * Jellyfin media server with secure multi-user access
 * Passwordless sudo for nixos-rebuild and trusted nix user configuration
+* HomeLab power management: No sleep/suspend/hibernate, screen locks after 5 minutes
 
 == Adding a New Host ==
 
