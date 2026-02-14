@@ -97,6 +97,13 @@
     HandleHibernateKey = "ignore";
   };
 
+  systemd.sleep.extraConfig = ''
+    AllowSuspend=no
+    AllowHibernation=no
+    AllowHybridSleep=no
+    AllowSuspendThenHibernate=no
+  '';
+
   powerManagement.enable = true;
 
   # Hibernate after 1 hour of idle time
