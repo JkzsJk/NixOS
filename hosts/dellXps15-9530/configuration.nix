@@ -88,7 +88,17 @@
     LockOnResume=true
   '';
 
-  # Power management: screen timeout
+  # Prevent sleep/suspend/hibernate - keep Jellyfin and other services running
+  # Screen will still blank and lock after 5 minutes (configured in kscreenlockerrc above)
+  services.logind.extraConfig = ''
+    HandleSuspendKey=ignore
+    HandleHibernateKey=ignore
+    HandleLidSwitch=ignore
+    HandleLidSwitchExternalPower=ignore
+    IdleAction=ignore
+  '';
+
+  # Power management: Keep services running (HomeLab use case)
   powerManagement.enable = true;
 
   # Hibernate after 1 hour of idle time
@@ -262,7 +272,11 @@
     enable = true;
     openFirewall = true;  # Opens ports 8096, 8920, 1900, 7359
     watchUsername = "jason";  # User who manages media files
-    mediaLibraries = [ "/srv/media" ];  # System media directory (FHS compliant)
+    mediaLibraries = [
+      "/srv/media"
+      "/srv/media/movies"
+      "/srv/media/music"
+    ];  # System media directory (FHS compliant)
   };
 
   # Open ports in the firewall.
