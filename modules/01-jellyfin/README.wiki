@@ -51,7 +51,6 @@ Custom Jellyfin media server module with hardware acceleration support.
 imports = [
   ../../modules/01-jellyfin
 ];
-</source>
 
 myServices.jellyfin = {
   enable = true;
@@ -132,13 +131,15 @@ myServices.jellyfin = {
 === Recommended: System Directory ===
 
 # '''Enable in your host configuration:'''
-#: <source lang="nix">
-#: myServices.jellyfin = {
-#:   enable = true;
-#:   watchUsername = "jason";
-#:   mediaLibraries = [ "/srv/media" ];
-#: };
-#: </source>
+
+<source lang="nix">
+myServices.jellyfin = {
+  enable = true;
+  watchUsername = "jason";
+  mediaLibraries = [ "/srv/media" ];
+};
+</source>
+
 # '''Rebuild system:''' <code>sudo nixos-rebuild switch</code>
 # '''Access Jellyfin:''' <code>http://localhost:8096</code>
 # '''In Jellyfin web UI:'''
@@ -149,13 +150,15 @@ myServices.jellyfin = {
 === Alternative: Downloads Folder ===
 
 # '''Enable in your host configuration:'''
-#: <source lang="nix">
-#: myServices.jellyfin = {
-#:   enable = true;
-#:   watchDownloadsFolder = true;
-#:   watchUsername = "jason";
-#: };
-#: </source>
+
+<source lang="nix">
+myServices.jellyfin = {
+  enable = true;
+  watchDownloadsFolder = true;
+  watchUsername = "jason";
+};
+</source>
+
 # '''Rebuild and access:''' <code>http://localhost:8096</code>
 # '''In Jellyfin web UI:'''
 #* Complete initial setup
@@ -227,11 +230,13 @@ After enabling, Jellyfin will be accessible at:
 When your client device is on the same network as the Jellyfin server:
 
 # '''Find your server's IP address:'''
-#: <source lang="bash">
-#: # On the server, run:
-#: hostname -I
-#: # Or: ip addr show
-#: </source>
+
+<source lang="bash">
+# On the server, run:
+hostname -I
+# Or: ip addr show
+</source>
+
 # '''Connect from client:'''
 #* '''URL:''' <code>http://<SERVER-IP>:8096</code>
 #* '''Example:''' <code>http://192.168.1.100:8096</code>
@@ -266,14 +271,15 @@ To access Jellyfin from outside your home network:
 # '''Use domain name:''' <code>https://jellyfin.yourdomain.com</code>
 # ✅ '''Secure:''' Encrypted traffic, proper authentication
 # Configure in NixOS:
-#: <source lang="nix">
-#: services.caddy = {
-#:   enable = true;
-#:   virtualHosts."jellyfin.yourdomain.com".extraConfig = ''
-#:     reverse_proxy localhost:8096
-#:   '';
-#: };
-#: </source>
+
+<source lang="nix">
+services.caddy = {
+  enable = true;
+  virtualHosts."jellyfin.yourdomain.com".extraConfig = ''
+    reverse_proxy localhost:8096
+  '';
+};
+</source>
 
 === Recommended Setup ===
 
@@ -310,7 +316,6 @@ users.users.jason = {
   isNormalUser = true;
   extraGroups = [ "networkmanager" "wheel" "media" ];
 };
-</source>
 
 users.users.alice = {
   isNormalUser = true;
