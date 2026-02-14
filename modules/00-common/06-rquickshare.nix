@@ -17,7 +17,7 @@
 
   # Configure static port for RQuickShare (per-user config)
   home-manager.sharedModules = [
-    {
+    ({ config, ... }: {
       home.file.".local/share/dev.mandre.rquickshare/.settings.json" = {
         text = builtins.toJSON {
           port = 65535;
@@ -26,7 +26,7 @@
         };
         force = true;  # Overwrite existing settings file
       };
-    }
+    })
   ];
 
   # Open firewall ports for RQuickShare
