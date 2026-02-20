@@ -81,18 +81,55 @@
     telegram-desktop
   ];
   
-  # KDE Plasma screen lock configuration, lock screen after 5 minutes of inactivity.
+  # KDE Plasma screen lock - lock after 15 minutes of inactivity
   environment.etc."xdg/kscreenlockerrc".text = ''
     [Daemon]
-    Timeout=5
+    Autolock=true
     LockOnResume=true
+    Timeout=15
   '';
 
-  # Prevent sleep/suspend/hibernate - keep Jellyfin and other services running
-  # Screen will still blank and lock after 5 minutes (configured in kscreenlockerrc above)
+  # KDE Plasma display power management - dim at 4 min, turn off at 5 min
+  environment.etc."xdg/powermanagementprofilesrc".text = ''
+    [AC][DimDisplay]
+    idleTime=240000
+
+    [AC][DPMSControl]
+    idleTime=300000
+
+    [AC][HandleButtonEvents]
+    lidAction=0
+    powerButtonAction=0
+    triggerLidActionWhenExternalMonitorPresent=false
+
+    [Battery][DimDisplay]
+    idleTime=240000
+
+    [Battery][DPMSControl]
+    idleTime=300000
+
+    [Battery][HandleButtonEvents]
+    lidAction=0
+    powerButtonAction=0
+    triggerLidActionWhenExternalMonitorPresent=false
+
+    [LowBattery][DimDisplay]
+    idleTime=240000
+
+    [LowBattery][DPMSControl]
+    idleTime=300000
+
+    [LowBattery][HandleButtonEvents]
+    lidAction=0
+    powerButtonAction=0
+    triggerLidActionWhenExternalMonitorPresent=false
+  '';
+
+  # Lid close: lock screen and turn off display (never suspend/hibernate)
+  # Prevents sleep/suspend/hibernate - keeps Jellyfin and other services running
   services.logind.settings.Login = {
-    HandleLidSwitch = "ignore";
-    HandleLidSwitchExternalPower = "ignore";
+    HandleLidSwitch = "lock";
+    HandleLidSwitchExternalPower = "lock";
     HandleSuspendKey = "ignore";
     HandleHibernateKey = "ignore";
   };
