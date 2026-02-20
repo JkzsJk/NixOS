@@ -101,9 +101,7 @@ AllowedIPs = 0.0.0.0/0
 
 Save to <code>/root/wireguard-deluge.conf</code> (secure with <code>chmod 600</code>).
 
-=== 2. Enable Module ===
-
-Add to <code>configuration.nix</code>:
+'''Step 2:''' Enable Deluge:
 
 <source lang="nix">
 imports = [
@@ -112,8 +110,7 @@ imports = [
 
 myServices.deluge = {
   enable = true;
-  
-  downloadDir = "/mnt/storage/torrents";
+  downloadDir = "/srv/torrents";
   
   web = {
     enable = true;
@@ -122,15 +119,48 @@ myServices.deluge = {
   };
   
   vpn = {
+    useSharedConfig = false;  # Standalone mode
     configFile = /root/wireguard-deluge.conf;
-    address = "10.8.0.2/24";          # Match your WireGuard config
-    endpoint = "vpn.server.com:51820";
-    dns = [ "10.8.0.1" ];             # Optional: VPN DNS
+    address = "10.8.0.2/24";  # Must match config file
+    endpoint = "vpn.provider.com:51820";  # Must match config file
   };
 };
 </source>
 
-=== 3. Rebuild System ===
+=== Method 3: Standalone with Separate Key File ===
+
+'''Step 1:''' Generate and save keys:
+
+<source lang="bash">
+# Generate private key
+wg genkey | sudo tee /root/wireguard-deluge.key
+sudo chmod 600 /root/wireguard-deluge.key
+
+# Get public key to share with VPN provider
+sudo cat /root/wireguard-deluge.key | wg pubkey
+</source>
+
+'''Step 2:''' Configure Deluge with individual options:
+
+<source lang="nix">
+myServices.deluge = {
+  enable = true;
+  downloadDir = "/srv/torrents";
+  
+  web.enable = true;
+  
+  vpn = {
+    useSharedConfig = false;
+    privateKeyFile = "/root/wireguard-deluge.key";
+    publicKey = "SERVER_PUBLIC_KEY";  # From VPN provider
+    endpoint = "vpn.provider.com:51820";
+    address = "10.8.0.2/24";  # From VPN provider
+    dns = [ "10.8.0.1" ];
+  };
+};
+</source>
+
+=== Rebuild System ===
 
 <source lang="bash">
 sudo nixos-rebuild switch
@@ -223,10 +253,15 @@ sudo ip netns exec delugevpn wg show
 * <code>myServices.deluge.web.openFirewall</code> - Allow web access (default: true)
 * <code>myServices.deluge.daemon.port</code> - Daemon port (default: 58846)
 * <code>myServices.deluge.vpn.namespace</code> - Network namespace name (default: <code>delugevpn</code>)
-* <code>myServices.deluge.vpn.configFile</code> - WireGuard config path (required)
-* <code>myServices.deluge.vpn.address</code> - VPN interface IP/CIDR (required)
+* <code>myServices.deluge.vpn.interface</code> - WireGuard interface name in namespace (default: <code>wg-deluge</code>)
+* <code>myServices.deluge.vpn.useSharedConfig</code> - Use myServices.wireguard config (default: false)
+* <code>myServices.deluge.vpn.wireguardInterface</code> - WireGuard interface to use from shared config (required if useSharedConfig=true)
+* <code>myServices.deluge.vpn.configFile</code> - WireGuard config file path (used if useSharedConfig=false)
+* <code>myServices.deluge.vpn.privateKeyFile</code> - Private key file (alternative to configFile)
+* <code>myServices.deluge.vpn.publicKey</code> - Server public key (required with privateKeyFile)
+* <code>myServices.deluge.vpn.address</code> - VPN IP/CIDR (required if useSharedConfig=false)
 * <code>myServices.deluge.vpn.addressV6</code> - IPv6 address (optional)
-* <code>myServices.deluge.vpn.endpoint</code> - VPN server endpoint (required)
+* <code>myServices.deluge.vpn.endpoint</code> - VPN server endpoint (required if useSharedConfig=false)
 * <code>myServices.deluge.vpn.dns</code> - DNS servers for VPN namespace (default: <code>[]</code>)
 
 == Security Notes ==

@@ -62,18 +62,65 @@ with lib;
         description = "Name of the WireGuard interface";
       };
 
+      # Option 1: Use shared WireGuard module configuration
+      useSharedConfig = mkOption {
+        type = types.bool;
+        default = false;
+        description = ''
+          Use configuration from myServices.wireguard module.
+          When enabled, wireguardInterface must be set.
+          When disabled, standalone configuration (configFile, address, endpoint) is used.
+        '';
+      };
+
+      wireguardInterface = mkOption {
+        type = types.nullOr types.str;
+        default = null;
+        example = "wg0";
+        description = ''
+          Name of the WireGuard interface from myServices.wireguard module to use.
+          Only used when useSharedConfig = true.
+        '';
+      };
+
+      # Option 2: Standalone configuration (legacy)
       configFile = mkOption {
-        type = types.path;
+        type = types.nullOr types.path;
+        default = null;
         example = "/root/wireguard-deluge.conf";
         description = ''
           Path to WireGuard configuration file.
           Must contain PrivateKey, PublicKey, Endpoint, etc.
           Keep this file secure (root-only readable).
+          Only used when useSharedConfig = false.
+        '';
+      };
+
+      privateKeyFile = mkOption {
+        type = types.nullOr types.path;
+        default = null;
+        example = "/root/wireguard-private.key";
+        description = ''
+          Path to WireGuard private key file (alternative to configFile).
+          Use with address, endpoint, and publicKey options.
+          Only used when useSharedConfig = false and configFile = null.
+        '';
+      };
+
+      publicKey = mkOption {
+        type = types.nullOr types.str;
+        default = null;
+        example = "SERVER_PUBLIC_KEY_HERE";
+        description = ''
+          WireGuard server public key.
+          Required when using privateKeyFile.
+          Only used when useSharedConfig = false.
         '';
       };
 
       address = mkOption {
-        type = types.str;
+        type = types.nullOr types.str;
+        default = null;
         example = "10.8.0.2/24";
         description = "VPN interface IPv4 address with CIDR notation";
       };
@@ -86,7 +133,8 @@ with lib;
       };
 
       endpoint = mkOption {
-        type = types.str;
+        type = types.nullOr types.str;
+        default = null;
         example = "vpn.provider.com:51820";
         description = "WireGuard endpoint (server:port)";
       };

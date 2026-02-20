@@ -1,0 +1,332 @@
+= WireGuard VPN Module =
+
+General-purpose WireGuard VPN client module for NixOS.
+
+== Structure ==
+
+<pre>
+03-wireguard/
+  ├─ default.nix       - Entry point (imports all modules)
+  ├─ 00-packages.nix   - WireGuard tools
+  ├─ 01-options.nix    - Module options definitions
+  └─ 02-service.nix    - WireGuard service configuration
+</pre>
+
+== Modules ==
+
+=== 00-packages.nix ===
+* Adds wireguard-tools to system packages
+* Provides <code>wg</code> and <code>wg-quick</code> commands
+
+=== 01-options.nix ===
+* Defines all module options
+* Interface configuration (addresses, DNS, MTU)
+* Peer settings (public key, endpoint, allowed IPs)
+* Kill switch option
+
+=== 02-service.nix ===
+* Configures WireGuard kernel module
+* Sets up network interfaces
+* Manages DNS resolution
+* Optional kill switch firewall rules
+
+== Features ==
+
+* '''Multiple interfaces''': Support for multiple VPN connections
+* '''DNS management''': Automatic DNS configuration per interface
+* '''Kill switch''': Optional firewall rule to block traffic when VPN is down
+* '''Persistent keepalive''': Keeps NAT connections alive
+* '''Flexible configuration''': Support for multiple peers and custom routes
+
+== Usage ==
+
+=== 1. Generate Keys ===
+
+<source lang="bash">
+# Generate private key
+wg genkey | sudo tee /root/wireguard-private.key
+sudo chmod 600 /root/wireguard-private.key
+
+# Generate public key (share this with your VPN provider)
+sudo cat /root/wireguard-private.key | wg pubkey
+</source>
+
+=== 2. Get VPN Server Details ===
+
+From your VPN provider, obtain:
+* Server public key
+* Server endpoint (IP:port)
+* Your assigned VPN IP address
+* DNS servers (optional)
+
+=== 3. Enable Module ===
+
+Add to <code>configuration.nix</code>:
+
+<source lang="nix">
+imports = [
+  ../../modules/03-wireguard
+];
+
+myServices.wireguard = {
+  enable = true;
+  
+  interfaces = {
+    wg0 = {
+      privateKeyFile = "/root/wireguard-private.key";
+      address = [ "10.8.0.2/24" ];
+      dns = [ "10.8.0.1" "1.1.1.1" ];
+      
+      peers = [{
+        publicKey = "SERVER_PUBLIC_KEY_HERE";
+        endpoint = "vpn.provider.com:51820";
+        allowedIPs = [ "0.0.0.0/0" "::/0" ];  # Route all traffic through VPN
+        persistentKeepalive = 25;
+      }];
+    };
+  };
+  
+  # Optional: Enable kill switch
+  enableKillSwitch = false;  # Change to true to block traffic if VPN drops
+};
+</source>
+
+=== 4. Rebuild System ===
+
+<source lang="bash">
+sudo nixos-rebuild switch
+</source>
+
+== Common Configurations ==
+
+=== Split Tunneling (Route Only Specific IPs) ===
+
+<source lang="nix">
+myServices.wireguard = {
+  enable = true;
+  interfaces.wg0 = {
+    privateKeyFile = "/root/wireguard-private.key";
+    address = [ "10.8.0.2/24" ];
+    
+    peers = [{
+      publicKey = "SERVER_PUBLIC_KEY";
+      endpoint = "vpn.provider.com:51820";
+      # Only route specific networks through VPN
+      allowedIPs = [ "192.168.1.0/24" "10.0.0.0/8" ];
+      persistentKeepalive = 25;
+    }];
+  };
+};
+</source>
+
+=== Multiple VPN Connections ===
+
+<source lang="nix">
+myServices.wireguard = {
+  enable = true;
+  
+  interfaces = {
+    wg0 = {
+      # First VPN connection
+      privateKeyFile = "/root/wg0-private.key";
+      address = [ "10.8.0.2/24" ];
+      peers = [{ /* ... */ }];
+    };
+    
+    wg1 = {
+      # Second VPN connection
+      privateKeyFile = "/root/wg1-private.key";
+      address = [ "10.9.0.2/24" ];
+      peers = [{ /* ... */ }];
+    };
+  };
+};
+</source>
+
+=== With Kill Switch (Blocks Traffic if VPN Drops) ===
+
+<source lang="nix">
+myServices.wireguard = {
+  enable = true;
+  enableKillSwitch = true;  # WARNING: Blocks all internet if VPN disconnects
+  
+  interfaces.wg0 = {
+    privateKeyFile = "/root/wireguard-private.key";
+    address = [ "10.8.0.2/24" ];
+    peers = [{ /* ... */ }];
+  };
+};
+</source>
+
+== Verification ==
+
+=== Check Connection Status ===
+
+<source lang="bash">
+# Show interface status
+sudo wg show
+
+# Check IP address (should show VPN IP)
+ip addr show wg0
+
+# Test connectivity
+ping -c 3 10.8.0.1
+
+# Check public IP (should show VPN server IP)
+curl https://api.ipify.org
+</source>
+
+=== Check DNS Configuration ===
+
+<source lang="bash">
+# Show DNS for interface
+resolvectl status wg0
+
+# Test DNS resolution
+nslookup example.com
+</source>
+
+=== Monitor Connection ===
+
+<source lang="bash">
+# Watch WireGuard status (live updates)
+watch -n 1 sudo wg show
+
+# Check systemd service status
+systemctl status wg-quick-wg0
+
+# View logs
+journalctl -u wg-quick-wg0 -f
+</source>
+
+== Troubleshooting ==
+
+=== Connection Not Establishing ===
+
+<source lang="bash">
+# Check if interface is up
+ip link show wg0
+
+# Verify configuration
+sudo wg show wg0
+
+# Check firewall isn't blocking
+sudo iptables -L -v -n | grep 51820
+
+# Test UDP connectivity to server
+nc -u -v vpn.provider.com 51820
+</source>
+
+=== No Internet After Connecting ===
+
+<source lang="bash">
+# Check routing table
+ip route show
+
+# Verify DNS is working
+resolvectl query example.com
+
+# Check if packets are being sent
+sudo wg show wg0 transfer
+
+# Try pinging VPN gateway
+ping 10.8.0.1
+</source>
+
+=== Kill Switch Blocking Everything ===
+
+<source lang="bash">
+# Temporarily disable kill switch
+sudo iptables -D OUTPUT -j REJECT
+
+# Check firewall rules
+sudo iptables -L OUTPUT -v -n
+
+# Restart networking
+sudo systemctl restart wg-quick-wg0
+</source>
+
+=== Key File Permission Issues ===
+
+<source lang="bash">
+# Fix permissions
+sudo chmod 600 /root/wireguard-private.key
+sudo chown root:root /root/wireguard-private.key
+
+# Verify
+ls -l /root/wireguard-private.key
+</source>
+
+== Options ==
+
+* <code>myServices.wireguard.enable</code> - Enable WireGuard VPN
+* <code>myServices.wireguard.enableKillSwitch</code> - Block traffic when VPN is down (default: false)
+* <code>myServices.wireguard.interfaces.<name>.privateKeyFile</code> - Path to private key file (required)
+* <code>myServices.wireguard.interfaces.<name>.address</code> - List of IP addresses for interface (required)
+* <code>myServices.wireguard.interfaces.<name>.dns</code> - DNS servers (default: <code>[]</code>)
+* <code>myServices.wireguard.interfaces.<name>.mtu</code> - MTU size (default: <code>null</code>)
+* <code>myServices.wireguard.interfaces.<name>.peers</code> - List of VPN servers/peers (required)
+* <code>myServices.wireguard.interfaces.<name>.peers[].publicKey</code> - Peer public key (required)
+* <code>myServices.wireguard.interfaces.<name>.peers[].endpoint</code> - Server endpoint address:port (required)
+* <code>myServices.wireguard.interfaces.<name>.peers[].allowedIPs</code> - IPs to route through peer (default: <code>["0.0.0.0/0" "::/0"]</code>)
+* <code>myServices.wireguard.interfaces.<name>.peers[].persistentKeepalive</code> - Keepalive interval in seconds (default: 25)
+* <code>myServices.wireguard.interfaces.<name>.postUp</code> - Commands after interface up (default: <code>[]</code>)
+* <code>myServices.wireguard.interfaces.<name>.postDown</code> - Commands after interface down (default: <code>[]</code>)
+
+== Security Notes ==
+
+* Private key files must be readable only by root (<code>chmod 600</code>)
+* Never share your private key
+* Store keys in <code>/root</code> or secure location
+* Kill switch prevents IP leaks but blocks internet when VPN is down
+* Use <code>persistentKeepalive</code> to maintain connection through NAT
+* Consider using preshared keys for post-quantum security
+
+== VPN Provider Examples ==
+
+=== Mullvad ===
+
+Download WireGuard config from Mullvad, then extract:
+
+<source lang="bash">
+# Extract private key
+grep PrivateKey mullvad-config.conf | cut -d' ' -f3 | sudo tee /root/mullvad-private.key
+sudo chmod 600 /root/mullvad-private.key
+
+# Extract server details
+grep Endpoint mullvad-config.conf  # Use this in endpoint
+grep Address mullvad-config.conf   # Use this in address
+grep PublicKey mullvad-config.conf # Use this in peers.publicKey
+</source>
+
+=== ProtonVPN ===
+
+<source lang="nix">
+myServices.wireguard.interfaces.wg0 = {
+  privateKeyFile = "/root/protonvpn-private.key";
+  address = [ "10.2.0.2/32" ];
+  dns = [ "10.2.0.1" ];
+  
+  peers = [{
+    publicKey = "PROTON_SERVER_PUBLIC_KEY";
+    endpoint = "SERVER.protonvpn.net:51820";
+    allowedIPs = [ "0.0.0.0/0" ];
+  }];
+};
+</source>
+
+=== Custom/Self-Hosted ===
+
+<source lang="nix">
+myServices.wireguard.interfaces.wg0 = {
+  privateKeyFile = "/root/wireguard-private.key";
+  address = [ "10.0.0.2/24" ];
+  
+  peers = [{
+    publicKey = "YOUR_SERVER_PUBLIC_KEY";
+    endpoint = "your-server.com:51820";
+    allowedIPs = [ "0.0.0.0/0" ];
+    persistentKeepalive = 25;
+  }];
+};
+</source>
