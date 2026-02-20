@@ -67,9 +67,14 @@ with lib;
         type = types.bool;
         default = false;
         description = ''
-          Use configuration from myServices.wireguard module.
-          When enabled, wireguardInterface must be set.
-          When disabled, standalone configuration (configFile, address, endpoint) is used.
+          Reuse VPN credentials from myServices.wireguard module.
+          
+          IMPORTANT: This creates a SEPARATE VPN connection in an isolated namespace.
+          - Deluge traffic: Goes through VPN (in isolated namespace)
+          - System traffic: Uses normal internet (or WireGuard module if enabled separately)
+          
+          This option only shares the CREDENTIALS (keys, server details), not the connection itself.
+          When enabled, wireguardInterface must be set to reference the WireGuard module config.
         '';
       };
 
@@ -78,8 +83,11 @@ with lib;
         default = null;
         example = "wg0";
         description = ''
-          Name of the WireGuard interface from myServices.wireguard module to use.
+          Name of the WireGuard interface from myServices.wireguard module to copy credentials from.
           Only used when useSharedConfig = true.
+          
+          Note: This does NOT use the actual wg0 interface. It copies the credentials
+          to create a separate isolated VPN connection (wg-deluge) for Deluge only.
         '';
       };
 
