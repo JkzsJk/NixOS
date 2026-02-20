@@ -1,0 +1,202 @@
+= Deluge Module (VPN Namespace Isolated)
+
+BitTorrent client with WireGuard VPN isolation via network namespace.
+
+== Architecture
+
+```
+┌─────────────────────────────────────────┐
+│ Root Namespace (Normal Network)         │
+│                                          │
+│  ┌──────────────┐    ┌──────────────┐  │
+│  │ Deluge Web   │───▶│ Proxy Socket │  │
+│  │ (Port 8112)  │    │ (Port 58846) │  │
+│  └──────────────┘    └───────┬──────┘  │
+│                              │          │
+└──────────────────────────────┼──────────┘
+                               │
+        ┌──────────────────────┼──────────────────────┐
+        │ VPN Namespace        ▼                      │
+        │                                             │
+        │  ┌─────────────┐    ┌──────────────────┐  │
+        │  │ WireGuard   │───▶│ Deluge Daemon    │  │
+        │  │ Interface   │    │ (Isolated)       │  │
+        │  └─────────────┘    └──────────────────┘  │
+        │                                             │
+        └─────────────────────────────────────────────┘
+                               │
+                               ▼
+                          VPN Server
+                               │
+                               ▼
+                           Internet
+```
+
+== Features
+
+* **Kill Switch**: Daemon stops if VPN disconnects
+* **IP Isolation**: Only VPN traffic; no leaks
+* **Web UI**: Access from any device on LAN
+* **Auto-restart**: Recovers from VPN failures
+
+== Configuration
+
+=== 1. Get WireGuard Config
+
+Obtain from VPN provider (Mullvad, ProtonVPN, etc.):
+```ini
+[Interface]
+PrivateKey = YOUR_PRIVATE_KEY
+Address = 10.8.0.2/24
+
+[Peer]
+PublicKey = SERVER_PUBLIC_KEY
+Endpoint = vpn.server.com:51820
+AllowedIPs = 0.0.0.0/0
+```
+
+Save to `/root/wireguard-deluge.conf` (secure with `chmod 600`).
+
+=== 2. Enable Module
+
+Add to `configuration.nix`:
+```nix
+{
+  imports = [
+    ./modules/02-deluge
+  ];
+
+  myServices.deluge = {
+    enable = true;
+    
+    downloadDir = "/mnt/storage/torrents";
+    
+    web = {
+      enable = true;
+      port = 8112;
+      openFirewall = true;
+    };
+    
+    vpn = {
+      configFile = /root/wireguard-deluge.conf;
+      address = "10.8.0.2/24";          # Match your WireGuard config
+      endpoint = "vpn.server.com:51820";
+      dns = [ "10.8.0.1" ];             # Optional: VPN DNS
+    };
+  };
+}
+```
+
+=== 3. Rebuild System
+
+```bash
+sudo nixos-rebuild switch
+```
+
+== Access
+
+* **Web UI**: `http://localhost:8112`
+* **Default password**: `deluge` (change immediately)
+
+== Verification
+
+=== Check VPN Connection
+```bash
+# Show namespace
+sudo ip netns list
+
+# Check WireGuard status in namespace
+sudo ip netns exec delugevpn wg show
+
+# Verify routing (should only show VPN interface)
+sudo ip netns exec delugevpn ip route
+```
+
+=== Test IP Leak Protection
+```bash
+# Get VPN IP (should be different from your real IP)
+sudo ip netns exec delugevpn curl -s https://api.ipify.org
+
+# Compare to your real IP
+curl -s https://api.ipify.org
+```
+
+=== Check Services
+```bash
+systemctl status deluged
+systemctl status delugeweb
+systemctl status proxy-to-deluged
+systemctl status delugevpn-wireguard
+```
+
+== Troubleshooting
+
+=== Daemon Won't Start
+```bash
+# Check namespace exists
+sudo ip netns list
+
+# Verify WireGuard config syntax
+sudo wg show all
+
+# Check logs
+journalctl -u deluged -f
+journalctl -u delugevpn-wireguard -f
+```
+
+=== Web UI Can't Connect
+```bash
+# Verify proxy socket
+systemctl status proxy-to-deluged
+
+# Check daemon is running
+sudo ip netns exec delugevpn ss -tlnp | grep 58846
+```
+
+=== VPN Not Working
+```bash
+# Test connectivity from namespace
+sudo ip netns exec delugevpn ping -c 3 1.1.1.1
+
+# Check WireGuard handshake
+sudo ip netns exec delugevpn wg show
+# Look for "latest handshake" - should be recent
+```
+
+== Options Reference
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `enable` | bool | false | Enable Deluge with VPN |
+| `dataDir` | path | /var/lib/deluge | Data directory |
+| `downloadDir` | path | /var/lib/deluge/downloads | Download location |
+| `web.enable` | bool | true | Enable web UI |
+| `web.port` | int | 8112 | Web UI port |
+| `web.openFirewall` | bool | true | Allow web access |
+| `daemon.port` | int | 58846 | Daemon port |
+| `vpn.namespace` | string | delugevpn | Namespace name |
+| `vpn.configFile` | path | - | WireGuard config path |
+| `vpn.address` | string | - | VPN interface IP/CIDR |
+| `vpn.addressV6` | string? | null | IPv6 address (optional) |
+| `vpn.endpoint` | string | - | VPN server endpoint |
+
+== Security Notes
+
+* WireGuard config contains secrets - protect with `chmod 600`
+* Change default web UI password immediately
+* Consider additional firewall rules for web UI
+* Monitor failed login attempts: `journalctl -u delugeweb`
+
+== File Structure
+
+```
+02-deluge/
+├── default.nix           # Module entry point
+├── 00-packages.nix       # System packages
+├── 01-options.nix        # Configuration options
+├── 02-namespace.nix      # Network namespace setup
+├── 03-wireguard.nix      # VPN configuration
+├── 04-service.nix        # Daemon + proxy
+├── 05-web.nix           # Web UI
+└── README.wiki          # This file
+```
