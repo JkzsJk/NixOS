@@ -89,6 +89,16 @@ with lib;
             example = 1420;
             description = "MTU size for the interface";
           };
+
+          enableKillSwitch = mkOption {
+            type = types.bool;
+            default = false;
+            description = ''
+              Enable kill switch for this interface to block all traffic when VPN is down.
+              WARNING: This will block internet if VPN disconnects.
+              Only affects this specific interface, not global traffic.
+            '';
+          };
         };
       });
       default = {};
@@ -97,6 +107,7 @@ with lib;
           privateKeyFile = "/root/wireguard-private.key";
           address = [ "10.8.0.2/24" ];
           dns = [ "10.8.0.1" ];
+          enableKillSwitch = true;
           peers = [{
             publicKey = "SERVER_PUBLIC_KEY";
             endpoint = "vpn.example.com:51820";
@@ -105,15 +116,6 @@ with lib;
         };
       };
       description = "WireGuard interfaces to configure";
-    };
-
-    enableKillSwitch = mkOption {
-      type = types.bool;
-      default = false;
-      description = ''
-        Enable kill switch to block all traffic when VPN is down.
-        WARNING: This will block internet if VPN disconnects.
-      '';
     };
   };
 }
