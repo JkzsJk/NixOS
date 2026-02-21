@@ -4,7 +4,7 @@
 with lib;
 
 let
-  cfg = config.services.deluge;
+  cfg = config.myServices.deluge;
 in
 {
   config = mkIf cfg.enable {

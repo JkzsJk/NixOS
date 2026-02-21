@@ -4,7 +4,7 @@
 with lib;
 
 let
-  cfg = config.services.deluge;
+  cfg = config.myServices.deluge;
   isDeluge1 = versionOlder cfg.package.version "2.0.0";
 
   configDir = "${cfg.dataDir}/.config/deluge";
