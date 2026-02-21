@@ -1,0 +1,329 @@
+= Deluge VPN-Isolated Module =
+
+Deluge BitTorrent client with WireGuard VPN isolation in network namespace.
+
+== Structure ==
+
+<pre>
+02-deluge/
+  ├─ default.nix        - Entry point (imports all modules)
+  ├─ 00-packages.nix    - Package configuration and extraPackages
+  ├─ 01-options.nix     - Service and VPN options definitions
+  ├─ 02-users.nix       - User/group creation and directory setup
+  ├─ 03-service.nix     - Deluge daemon with namespace binding
+  ├─ 04-web.nix         - Web UI systemd service
+  ├─ 05-firewall.nix    - Firewall rules
+  ├─ 06-namespace.nix   - Network namespace creation
+  ├─ 07-wireguard.nix   - WireGuard VPN in namespace
+  └─ 08-proxy.nix       - Socket proxy for web UI access
+</pre>
+
+== Architecture ==
+
+<pre>
+┌───────────────────────────────────────────┐
+│ Root Namespace (Normal Network)           │
+│                                           │
+│  ┌──────────────┐    ┌──────────────┐     │
+│  │ Deluge Web   │───▶│ Proxy Socket │     │
+│  │ (Port 8112)  │    │ (Port 58846) │     │
+│  └──────────────┘    └───────┬──────┘     │
+│                              │            │
+└──────────────────────────────┼────────────┘
+                               │
+        ┌──────────────────────┼──────────────────────┐
+        │ VPN Namespace        ▼                      │
+        │                                             │
+        │  ┌─────────────┐    ┌──────────────────┐    │
+        │  │ WireGuard   │───▶│ Deluge Daemon    │    │
+        │  │ wg0         │    │ (Isolated)       │    │
+        │  └─────────────┘    └──────────────────┘    │
+        │                                             │
+        └─────────────────────────────────────────────┘
+                               │
+                               ▼
+                          VPN Server
+                               │
+                               ▼
+                           Internet
+</pre>
+
+All Deluge traffic goes through the VPN. If VPN disconnects, Deluge has no internet access (kill switch).
+
+== Important Notes ==
+
+<pre>
+⚠️  VPN IS ENABLED BY DEFAULT (vpn.enable = true)
+
+    You MUST either:
+    1. Provide VPN configuration (configFile + ipv4Address), OR
+    2. Explicitly disable VPN with: vpn.enable = false;
+    
+    The module will fail with assertion errors if VPN is enabled
+    without proper configuration.
+</pre>
+
+== Quick Start (No VPN) ==
+
+To use Deluge without VPN isolation:
+
+<source lang="nix">
+myServices.deluge = {
+  enable = true;
+  declarative = true;
+  dataDir = "/var/lib/deluge";
+  
+  config = {
+    download_location = "/srv/torrents";
+    allow_remote = true;
+  };
+  
+  web = {
+    enable = true;
+    port = 8112;
+    openFirewall = true;
+  };
+  
+  vpn.enable = false;  # Disable VPN
+};
+</source>
+
+== VPN Setup ==
+
+'''Step 1:''' Get WireGuard config from your VPN provider and save to <code>/root/wireguard.conf</code>:
+
+<source lang="ini">
+[Interface]
+PrivateKey = YOUR_PRIVATE_KEY
+Address = 10.8.0.2/24
+
+[Peer]
+PublicKey = SERVER_PUBLIC_KEY
+Endpoint = vpn.server.com:51820
+AllowedIPs = 0.0.0.0/0
+</source>
+
+<source lang="bash">
+sudo chmod 600 /root/wireguard.conf
+</source>
+
+'''VPN Provider Examples:'''
+
+* '''Mullvad''' (~$5/month):
+*# Sign up at mullvad.net
+*# Go to "Manage" → "WireGuard configuration"
+*# Download the .conf file
+*# Update <code>ipv4Address</code> in your configuration.nix to match the <code>Address</code> line in the file
+
+<source lang="bash">
+sudo mkdir -p /root
+sudo cp ~/Downloads/mullvad-*.conf /root/wireguard.conf
+sudo chmod 600 /root/wireguard.conf
+</source>
+
+* '''ProtonVPN''' (Free tier available):
+*# Sign up at protonvpn.com
+*# Go to "Downloads" → "WireGuard configuration"
+*# Select a server location and download the config
+*# Update <code>ipv4Address</code> in your configuration.nix to match the <code>Address</code> line in the file
+
+'''Step 2:''' Enable Deluge with VPN in <code>configuration.nix</code>:
+
+<source lang="nix">
+myServices.deluge = {
+  enable = true;
+  declarative = true;
+  dataDir = "/var/lib/deluge";
+  
+  config = {
+    download_location = "/srv/torrents";
+    allow_remote = true;
+  };
+  
+  web = {
+    enable = true;
+    port = 8112;
+    openFirewall = true;
+  };
+  
+  # VPN is enabled by default, so these are REQUIRED:
+  vpn = {
+    # enable = true;  # Already defaults to true
+    configFile = /root/wireguard.conf;      # REQUIRED
+    ipv4Address = "10.8.0.2/24";            # REQUIRED (must match config)
+    
+    # Optional (have sensible defaults):
+    # namespace = "wg";
+    # interface = "wg0";
+    # ipv6Address = "fd00::2/64";
+  };
+};
+</source>
+
+'''Step 3:''' Rebuild system:
+
+<source lang="bash">
+sudo nixos-rebuild switch
+</source>
+
+== Access ==
+
+* '''Web UI''': <code>http://localhost:8112</code>
+* '''Default password''': <code>deluge</code> (change immediately)
+
+== Verification ==
+
+'''1. Verify VPN IP (Most Important):'''
+
+<source lang="bash">
+# Check IP from VPN namespace (should show VPN IP)
+sudo ip netns exec wg curl -s https://api.ipify.org
+
+# Compare with your real IP (should be different)
+curl -s https://api.ipify.org
+</source>
+
+'''2. Check WireGuard Status:'''
+
+<source lang="bash">
+# Show connection status and traffic stats
+sudo ip netns exec wg wg show
+
+# Look for:
+#   - "latest handshake" (should be recent)
+#   - "transfer" (increases when downloading)
+</source>
+
+'''3. Verify Deluge is in Namespace:'''
+
+<source lang="bash">
+# Check if deluged is running in VPN namespace
+# If this returns output, deluged is properly isolated
+sudo ip netns exec wg ps aux | grep deluged | grep -v grep
+</source>
+
+'''4. Monitor Traffic in Real-Time:'''
+
+<source lang="bash">
+# Watch WireGuard stats update every 2 seconds
+watch -n 2 'sudo ip netns exec wg wg show'
+</source>
+
+'''5. Check Service Status:'''
+
+<source lang="bash">
+# When VPN enabled
+systemctl status wg deluged proxy-to-deluged delugeweb
+
+# When VPN disabled
+systemctl status deluged delugeweb
+</source>
+
+'''Kill Switch Test:''' If VPN disconnects, Deluge will stop downloading (no internet access).
+
+== Validation ==
+
+The module enforces these requirements when VPN is enabled:
+
+* <code>vpn.configFile</code> must be set (path to WireGuard config)
+* <code>vpn.ipv4Address</code> must be set (IP address from config file)
+
+If you try to enable the module without these, you'll get assertion errors at build time.
+
+== Documentation ==
+
+Based on:
+* <https://wiki.nixos.org/wiki/Deluge>
+* <https://discourse.nixos.org/t/setting-up-wireguard-in-a-network-namespace/10252/8>
+* <https://github.com/existentialtype/deluge-namespaced-wireguard>
+
+= Native Deluge Module (02-deluge) =
+
+Standard NixOS Deluge module without VPN isolation.
+
+== Structure ==
+
+<pre>
+02-deluge-native/
+  ├─ default.nix        - Entry point (imports all modules)
+  ├─ 00-packages.nix    - Package configuration and extraPackages
+  ├─ 01-options.nix     - Service options definitions
+  ├─ 02-users.nix       - User/group creation and directory setup
+  ├─ 03-service.nix     - Deluge daemon systemd service
+  ├─ 04-web.nix         - Web UI systemd service
+  └─ 05-firewall.nix    - Firewall rules
+</pre>
+
+== Modules ==
+
+=== 00-packages.nix ===
+* Sets default deluge package (deluge-2_x for NixOS 20.09+)
+* Provides default extraPackages (unzip, gnutar, xz, bzip2)
+* Adds deluge to system packages
+
+=== 01-options.nix ===
+* All service option definitions
+* Daemon configuration (dataDir, config, authFile)
+* Web UI configuration (port, openFirewall)
+* Declarative mode support
+
+=== 02-users.nix ===
+* Creates deluge user and group
+* Sets up tmpfiles for directory creation
+* Manages permissions for data/config/download directories
+
+=== 03-service.nix ===
+* Deluge daemon systemd service
+* Declarative configuration management
+* Config file and auth file linking
+* Restart policy and limits
+
+=== 04-web.nix ===
+* Deluge web UI systemd service
+* Depends on deluged service
+* Configurable port
+
+=== 05-firewall.nix ===
+* Opens torrent listen ports (if declarative + openFirewall)
+* Opens web UI port (if web.openFirewall)
+
+== Usage ==
+
+This is the standard NixOS deluge module. Use it as:
+
+<source lang="nix">
+services.deluge = {
+  enable = true;
+  declarative = true;
+  openFirewall = true;
+  dataDir = "/var/lib/deluge";
+  authFile = "/run/keys/deluge-auth";
+  
+  config = {
+    download_location = "/srv/torrents";
+    allow_remote = true;
+    daemon_port = 58846;
+  };
+  
+  web = {
+    enable = true;
+    port = 8112;
+    openFirewall = true;
+  };
+};
+</source>
+
+== Differences from Custom Module ==
+
+This native module:
+* No VPN namespace isolation
+* No WireGuard integration
+* Standard NixOS service structure
+* Uses <code>services.deluge</code> namespace
+
+== Documentation ==
+
+Official Deluge documentation:
+* [https://dev.deluge-torrent.org/wiki/UserGuide Deluge User Guide - Deluge]
+* [https://dev.deluge-torrent.org/wiki/UserGuide/Authentication Authentication - Deluge]
+* [https://git.deluge-torrent.org/deluge/tree/deluge/core/preferencesmanager.py#n41 preferencesmanager.py « core « deluge - deluge - Deluge BitTorrent Client]

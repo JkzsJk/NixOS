@@ -10,6 +10,7 @@
       ./hardware-configuration.nix
       ../../modules/00-common
       ../../modules/01-jellyfin
+      ../../modules/02-deluge
     ];
 
   # Bootloader.
@@ -328,6 +329,30 @@
       "/srv/media/movies"
       "/srv/media/music"
     ];  # System media directory (FHS compliant)
+  };
+
+  # Enable Deluge BitTorrent client with VPN isolation
+  myServices.deluge = {
+    enable = true;
+    declarative = true;
+    dataDir = "/var/lib/deluge";
+    
+    config = {
+      download_location = "/srv/torrents";
+      allow_remote = true;
+    };
+    
+    web = {
+      enable = true;
+      port = 8112;
+      openFirewall = true;
+    };
+    
+    vpn = {
+      # enable = true;  # Already defaults to true
+      configFile = "/root/wireguard.conf";
+      ipv4Address = "10.8.0.2/24";  # Must match your VPN config
+    };
   };
 
   # Open ports in the firewall.
