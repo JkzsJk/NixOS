@@ -50,7 +50,45 @@ Deluge BitTorrent client with WireGuard VPN isolation in network namespace.
 
 All Deluge traffic goes through the VPN. If VPN disconnects, Deluge has no internet access (kill switch).
 
-== Usage ==
+== Important Notes ==
+
+<pre>
+⚠️  VPN IS ENABLED BY DEFAULT (vpn.enable = true)
+
+    You MUST either:
+    1. Provide VPN configuration (configFile + ipv4Address), OR
+    2. Explicitly disable VPN with: vpn.enable = false;
+    
+    The module will fail with assertion errors if VPN is enabled
+    without proper configuration.
+</pre>
+
+== Quick Start (No VPN) ==
+
+To use Deluge without VPN isolation:
+
+<source lang="nix">
+myServices.deluge = {
+  enable = true;
+  declarative = true;
+  dataDir = "/var/lib/deluge";
+  
+  config = {
+    download_location = "/srv/torrents";
+    allow_remote = true;
+  };
+  
+  web = {
+    enable = true;
+    port = 8112;
+    openFirewall = true;
+  };
+  
+  vpn.enable = false;  # Disable VPN
+};
+</source>
+
+== VPN Setup ==
 
 '''Step 1:''' Get WireGuard config from your VPN provider and save to <code>/root/wireguard.conf</code>:
 
@@ -88,13 +126,16 @@ myServices.deluge = {
     openFirewall = true;
   };
   
+  # VPN is enabled by default, so these are REQUIRED:
   vpn = {
-    enable = true;
-    namespace = "wg";
-    interface = "wg0";
-    configFile = /root/wireguard.conf;
-    ipv4Address = "10.8.0.2/24";  # Must match config file
-    # ipv6Address = "fd00::2/64";  # Optional
+    # enable = true;  # Already defaults to true
+    configFile = /root/wireguard.conf;      # REQUIRED
+    ipv4Address = "10.8.0.2/24";            # REQUIRED (must match config)
+    
+    # Optional (have sensible defaults):
+    # namespace = "wg";
+    # interface = "wg0";
+    # ipv6Address = "fd00::2/64";
   };
 };
 </source>
@@ -122,21 +163,26 @@ sudo ip netns exec wg wg show
 # Verify IP (should show VPN IP, not your real IP)
 sudo ip netns exec wg curl -s https://api.ipify.org
 
-# Check services
+# Check services (when VPN enabled)
 systemctl status deluged
+systemctl status netns@wg
 systemctl status wg
 systemctl status proxy-to-deluged
+systemctl status delugeweb
+
+# Check services (when VPN disabled)
+systemctl status deluged
+systemctl status delugeweb
 </source>
 
-== Disable VPN ==
+== Validation ==
 
-To use Deluge without VPN isolation:
+The module enforces these requirements when VPN is enabled:
 
-<source lang="nix">
-myServices.deluge.vpn.enable = false;
-</source>
+* <code>vpn.configFile</code> must be set (path to WireGuard config)
+* <code>vpn.ipv4Address</code> must be set (IP address from config file)
 
-This makes it function like a standard Deluge installation.
+If you try to enable the module without these, you'll get assertion errors at build time.
 
 == Documentation ==
 

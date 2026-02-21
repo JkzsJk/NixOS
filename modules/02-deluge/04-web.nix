@@ -15,8 +15,10 @@ in
       after = [
         "network.target"
         "deluged.service"
-      ];
-      requires = [ "deluged.service" ];
+      ] ++ optional cfg.vpn.enable "proxy-to-deluged.socket";
+      requires = if cfg.vpn.enable 
+        then [ "proxy-to-deluged.socket" ]
+        else [ "deluged.service" ];
       description = "Deluge BitTorrent WebUI";
       wantedBy = [ "multi-user.target" ];
       path = [ cfg.package ];
