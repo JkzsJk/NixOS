@@ -1,4 +1,4 @@
-# Deluge module - native NixOS deluge service split into modular structure
+# Deluge module - VPN-isolated deluge service with WireGuard
 { config, pkgs, ... }:
 
 {
@@ -9,5 +9,8 @@
     ./03-service.nix
     ./04-web.nix
     ./05-firewall.nix
+    ./06-namespace.nix
+    ./07-wireguard.nix
+    ./08-proxy.nix
   ];
 }

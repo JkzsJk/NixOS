@@ -10,6 +10,7 @@
       ./hardware-configuration.nix
       ../../modules/00-common
       ../../modules/01-jellyfin
+      ../../modules/02-deluge
     ];
 
   # Bootloader.
