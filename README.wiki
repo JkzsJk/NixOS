@@ -15,19 +15,19 @@ Learning my way around NixOS.
 |-
 | 2 || Fix variables structure || To Do || You know how you can put all variables into a single file in Terraform?
 |-
-| 3 || WireGuard VPN || To Do || &nbsp;
+| 3 || Immich || To Do || &nbsp;
 |-
-| 4 || Immich || To Do || &nbsp;
+| 4 || Terraform || To Do || &nbsp;
 |-
-| 5 || Terraform || To Do || &nbsp;
+| 5 || Podman || To Do || &nbsp;
 |-
-| 6 || Podman || To Do || &nbsp;
+| 6 || Kubernetes || To Do || &nbsp;
 |-
-| 7 || Kubernetes || To Do || &nbsp;
+| 7 || HomeLab || To Do || &nbsp;
 |-
-| 8 || HomeLab || To Do || &nbsp;
+| 8 || .dotfiles || To Do || &nbsp;
 |-
-| 9 || .dotfiles || To Do || &nbsp;
+| 9 || WireGuard VPN || ✅ Done || Done as part of Deluge module, works in separate namespace, only Deluge traffic goes through VPN but not the rest of the system.
 |-
 | 10 || Deluge || ✅ Done || &nbsp;
 |-
