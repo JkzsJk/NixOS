@@ -173,27 +173,53 @@ sudo nixos-rebuild switch
 
 == Verification ==
 
+'''1. Verify VPN IP (Most Important):'''
+
 <source lang="bash">
-# Check namespace exists
-sudo ip netns list
-
-# Check WireGuard status in namespace
-sudo ip netns exec wg wg show
-
-# Verify IP (should show VPN IP, not your real IP)
+# Check IP from VPN namespace (should show VPN IP)
 sudo ip netns exec wg curl -s https://api.ipify.org
 
-# Check services (when VPN enabled)
-systemctl status deluged
-systemctl status netns@wg
-systemctl status wg
-systemctl status proxy-to-deluged
-systemctl status delugeweb
-
-# Check services (when VPN disabled)
-systemctl status deluged
-systemctl status delugeweb
+# Compare with your real IP (should be different)
+curl -s https://api.ipify.org
 </source>
+
+'''2. Check WireGuard Status:'''
+
+<source lang="bash">
+# Show connection status and traffic stats
+sudo ip netns exec wg wg show
+
+# Look for:
+#   - "latest handshake" (should be recent)
+#   - "transfer" (increases when downloading)
+</source>
+
+'''3. Verify Deluge is in Namespace:'''
+
+<source lang="bash">
+# Check if deluged is running in VPN namespace
+# If this returns output, deluged is properly isolated
+sudo ip netns exec wg ps aux | grep deluged | grep -v grep
+</source>
+
+'''4. Monitor Traffic in Real-Time:'''
+
+<source lang="bash">
+# Watch WireGuard stats update every 2 seconds
+watch -n 2 'sudo ip netns exec wg wg show'
+</source>
+
+'''5. Check Service Status:'''
+
+<source lang="bash">
+# When VPN enabled
+systemctl status wg deluged proxy-to-deluged delugeweb
+
+# When VPN disabled
+systemctl status deluged delugeweb
+</source>
+
+'''Kill Switch Test:''' If VPN disconnects, Deluge will stop downloading (no internet access).
 
 == Validation ==
 
@@ -218,7 +244,7 @@ Standard NixOS Deluge module without VPN isolation.
 == Structure ==
 
 <pre>
-02-deluge/
+02-deluge-native/
   ├─ default.nix        - Entry point (imports all modules)
   ├─ 00-packages.nix    - Package configuration and extraPackages
   ├─ 01-options.nix     - Service options definitions
