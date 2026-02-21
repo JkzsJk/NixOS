@@ -89,40 +89,56 @@
     Timeout=15
   '';
 
-  # KDE Plasma display power management - dim at 4 min, turn off at 5 min
+  # KDE Plasma display power management
+  # Matches KDE System Settings > Power Management
   environment.etc."xdg/powermanagementprofilesrc".text = ''
     [AC][DimDisplay]
-    idleTime=240000
+    idleTime=300000
 
     [AC][DPMSControl]
-    idleTime=300000
+    idleTime=900000
+    lockBeforeTurnOff=900000
 
     [AC][HandleButtonEvents]
-    lidAction=0
-    powerButtonAction=0
+    lidAction=1
+    powerButtonAction=8
     triggerLidActionWhenExternalMonitorPresent=false
+
+    [AC][SuspendSession]
+    idleTime=259200000
+    suspendType=32
 
     [Battery][DimDisplay]
-    idleTime=240000
+    idleTime=300000
 
     [Battery][DPMSControl]
-    idleTime=300000
+    idleTime=900000
+    lockBeforeTurnOff=900000
 
     [Battery][HandleButtonEvents]
-    lidAction=0
-    powerButtonAction=0
+    lidAction=1
+    powerButtonAction=8
     triggerLidActionWhenExternalMonitorPresent=false
+
+    [Battery][SuspendSession]
+    idleTime=259200000
+    suspendType=32
 
     [LowBattery][DimDisplay]
-    idleTime=240000
-
-    [LowBattery][DPMSControl]
     idleTime=300000
 
+    [LowBattery][DPMSControl]
+    idleTime=900000
+    lockBeforeTurnOff=900000
+
     [LowBattery][HandleButtonEvents]
-    lidAction=0
-    powerButtonAction=0
+    lidAction=1
+    powerButtonAction=8
     triggerLidActionWhenExternalMonitorPresent=false
+
+    [LowBattery][SuspendSession]
+    idleTime=259200000
+    suspendType=32
   '';
 
   # Lid close: lock screen and turn off display (never suspend/hibernate)
