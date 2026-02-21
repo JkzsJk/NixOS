@@ -9,7 +9,7 @@ let
 in
 {
   options = {
-    services = {
+    myServices = {
       deluge = {
         enable = mkEnableOption "Deluge daemon";
 

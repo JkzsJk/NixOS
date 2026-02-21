@@ -4,8 +4,8 @@
 with lib;
 
 let
-  cfg = config.services.deluge;
-  cfg_web = config.services.deluge.web;
+  cfg = config.myServices.deluge;
+  cfg_web = config.myServices.deluge.web;
   
   listenPortsDefault = [ 6881 6889 ];
   

@@ -4,12 +4,12 @@
 with lib;
 
 let
-  cfg = config.services.deluge;
+  cfg = config.myServices.deluge;
 in
 {
   config = mkIf cfg.enable {
     # Set default deluge package based on stateVersion
-    services.deluge.package = mkDefault (
+    myServices.deluge.package = mkDefault (
       if versionAtLeast config.system.stateVersion "20.09" then
         pkgs.deluge-2_x
       else
@@ -21,7 +21,7 @@ in
     );
 
     # Provide a default set of extraPackages for extraction plugins
-    services.deluge.extraPackages = with pkgs; [
+    myServices.deluge.extraPackages = with pkgs; [
       unzip
       gnutar
       xz

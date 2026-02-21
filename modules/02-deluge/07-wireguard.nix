@@ -4,7 +4,7 @@
 with lib;
 
 let
-  cfg = config.services.deluge;
+  cfg = config.myServices.deluge;
   ns = cfg.vpn.namespace;
   iface = cfg.vpn.interface;
 in

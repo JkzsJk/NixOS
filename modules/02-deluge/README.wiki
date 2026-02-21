@@ -72,7 +72,7 @@ sudo chmod 600 /root/wireguard.conf
 '''Step 2:''' Enable Deluge with VPN in <code>configuration.nix</code>:
 
 <source lang="nix">
-services.deluge = {
+myServices.deluge = {
   enable = true;
   declarative = true;
   dataDir = "/var/lib/deluge";
@@ -133,7 +133,7 @@ systemctl status proxy-to-deluged
 To use Deluge without VPN isolation:
 
 <source lang="nix">
-services.deluge.vpn.enable = false;
+myServices.deluge.vpn.enable = false;
 </source>
 
 This makes it function like a standard Deluge installation.
