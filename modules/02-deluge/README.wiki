@@ -324,6 +324,6 @@ This native module:
 == Documentation ==
 
 Official Deluge documentation:
-* <https://dev.deluge-torrent.org/wiki/UserGuide>
-* <https://dev.deluge-torrent.org/wiki/UserGuide/Authentication>
-* <https://git.deluge-torrent.org/deluge/tree/deluge/core/preferencesmanager.py#n41>
+* [https://dev.deluge-torrent.org/wiki/UserGuide Deluge User Guide - Deluge]
+* [https://dev.deluge-torrent.org/wiki/UserGuide/Authentication Authentication - Deluge]
+* [https://git.deluge-torrent.org/deluge/tree/deluge/core/preferencesmanager.py#n41 preferencesmanager.py « core « deluge - deluge - Deluge BitTorrent Client]
