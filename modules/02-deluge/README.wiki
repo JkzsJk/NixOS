@@ -1,0 +1,90 @@
+= Deluge Native Module =
+
+Native NixOS Deluge service reorganized into modular structure.
+
+== Structure ==
+
+<pre>
+02-deluge-native/
+  ├─ default.nix        - Entry point (imports all modules)
+  ├─ 00-packages.nix    - Package configuration and extraPackages
+  ├─ 01-options.nix     - Service options definitions
+  ├─ 02-users.nix       - User/group creation and directory setup
+  ├─ 03-service.nix     - Deluge daemon systemd service
+  ├─ 04-web.nix         - Web UI systemd service
+  └─ 05-firewall.nix    - Firewall rules
+</pre>
+
+== Modules ==
+
+=== 00-packages.nix ===
+* Sets default deluge package (deluge-2_x for NixOS 20.09+)
+* Provides default extraPackages (unzip, gnutar, xz, bzip2)
+* Adds deluge to system packages
+
+=== 01-options.nix ===
+* All service option definitions
+* Daemon configuration (dataDir, config, authFile)
+* Web UI configuration (port, openFirewall)
+* Declarative mode support
+
+=== 02-users.nix ===
+* Creates deluge user and group
+* Sets up tmpfiles for directory creation
+* Manages permissions for data/config/download directories
+
+=== 03-service.nix ===
+* Deluge daemon systemd service
+* Declarative configuration management
+* Config file and auth file linking
+* Restart policy and limits
+
+=== 04-web.nix ===
+* Deluge web UI systemd service
+* Depends on deluged service
+* Configurable port
+
+=== 05-firewall.nix ===
+* Opens torrent listen ports (if declarative + openFirewall)
+* Opens web UI port (if web.openFirewall)
+
+== Usage ==
+
+This is the standard NixOS deluge module. Use it as:
+
+<source lang="nix">
+services.deluge = {
+  enable = true;
+  declarative = true;
+  openFirewall = true;
+  dataDir = "/var/lib/deluge";
+  authFile = "/run/keys/deluge-auth";
+  
+  config = {
+    download_location = "/srv/torrents";
+    allow_remote = true;
+    daemon_port = 58846;
+  };
+  
+  web = {
+    enable = true;
+    port = 8112;
+    openFirewall = true;
+  };
+};
+</source>
+
+== Differences from Custom Module ==
+
+This native module:
+* No VPN namespace isolation
+* No WireGuard integration
+* Standard NixOS service structure
+* Uses <code>services.deluge</code> namespace
+
+== Documentation ==
+
+Official Deluge documentation:
+* <https://dev.deluge-torrent.org/wiki/UserGuide>
+* <https://dev.deluge-torrent.org/wiki/UserGuide/Authentication>
+* <https://git.deluge-torrent.org/deluge/tree/deluge/core/preferencesmanager.py#n41>
