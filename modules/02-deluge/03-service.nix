@@ -35,28 +35,39 @@ let
 in
 {
   config = mkIf cfg.enable {
-    systemd.services.deluged = {
-      after = [ "network.target" ];
-      description = "Deluge BitTorrent Daemon";
-      wantedBy = [ "multi-user.target" ];
-      path = [ cfg.package ] ++ cfg.extraPackages;
+    systemd.services.deluged = mkMerge [
+      # Base configuration
+      {
+        after = [ "network.target" ];
+        description = "Deluge BitTorrent Daemon";
+        wantedBy = [ "multi-user.target" ];
+        path = [ cfg.package ] ++ cfg.extraPackages;
+        
+        serviceConfig = {
+          ExecStart = ''
+            ${cfg.package}/bin/deluged \
+              --do-not-daemonize \
+              --config ${configDir}
+          '';
+          # To prevent "Quit & shutdown daemon" from working; we want systemd to
+          # manage it!
+          Restart = "on-success";
+          User = cfg.user;
+          Group = cfg.group;
+          UMask = "0002";
+          LimitNOFILE = cfg.openFilesLimit;
+        };
+        
+        preStart = preStart;
+      }
       
-      serviceConfig = {
-        ExecStart = ''
-          ${cfg.package}/bin/deluged \
-            --do-not-daemonize \
-            --config ${configDir}
-        '';
-        # To prevent "Quit & shutdown daemon" from working; we want systemd to
-        # manage it!
-        Restart = "on-success";
-        User = cfg.user;
-        Group = cfg.group;
-        UMask = "0002";
-        LimitNOFILE = cfg.openFilesLimit;
-      };
-      
-      preStart = preStart;
-    };
+      # VPN namespace binding if enabled
+      (mkIf cfg.vpn.enable {
+        bindsTo = [ "netns@${cfg.vpn.namespace}.service" ];
+        requires = [ "network-online.target" "wg.service" ];
+        after = [ "wg.service" ];
+        serviceConfig.NetworkNamespacePath = "/var/run/netns/${cfg.vpn.namespace}";
+      })
+    ];
   };
 }

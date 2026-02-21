@@ -1,6 +1,149 @@
-= Deluge Native Module =
+= Deluge VPN-Isolated Module =
 
-Native NixOS Deluge service reorganized into modular structure.
+Deluge BitTorrent client with WireGuard VPN isolation in network namespace.
+
+== Structure ==
+
+<pre>
+02-deluge/
+  ├─ default.nix        - Entry point (imports all modules)
+  ├─ 00-packages.nix    - Package configuration and extraPackages
+  ├─ 01-options.nix     - Service and VPN options definitions
+  ├─ 02-users.nix       - User/group creation and directory setup
+  ├─ 03-service.nix     - Deluge daemon with namespace binding
+  ├─ 04-web.nix         - Web UI systemd service
+  ├─ 05-firewall.nix    - Firewall rules
+  ├─ 06-namespace.nix   - Network namespace creation
+  ├─ 07-wireguard.nix   - WireGuard VPN in namespace
+  └─ 08-proxy.nix       - Socket proxy for web UI access
+</pre>
+
+== Architecture ==
+
+<pre>
+┌───────────────────────────────────────────┐
+│ Root Namespace (Normal Network)           │
+│                                           │
+│  ┌──────────────┐    ┌──────────────┐     │
+│  │ Deluge Web   │───▶│ Proxy Socket │     │
+│  │ (Port 8112)  │    │ (Port 58846) │     │
+│  └──────────────┘    └───────┬──────┘     │
+│                              │            │
+└──────────────────────────────┼────────────┘
+                               │
+        ┌──────────────────────┼──────────────────────┐
+        │ VPN Namespace        ▼                      │
+        │                                             │
+        │  ┌─────────────┐    ┌──────────────────┐    │
+        │  │ WireGuard   │───▶│ Deluge Daemon    │    │
+        │  │ wg0         │    │ (Isolated)       │    │
+        │  └─────────────┘    └──────────────────┘    │
+        │                                             │
+        └─────────────────────────────────────────────┘
+                               │
+                               ▼
+                          VPN Server
+                               │
+                               ▼
+                           Internet
+</pre>
+
+All Deluge traffic goes through the VPN. If VPN disconnects, Deluge has no internet access (kill switch).
+
+== Usage ==
+
+'''Step 1:''' Get WireGuard config from your VPN provider and save to <code>/root/wireguard.conf</code>:
+
+<source lang="ini">
+[Interface]
+PrivateKey = YOUR_PRIVATE_KEY
+Address = 10.8.0.2/24
+
+[Peer]
+PublicKey = SERVER_PUBLIC_KEY
+Endpoint = vpn.server.com:51820
+AllowedIPs = 0.0.0.0/0
+</source>
+
+<source lang="bash">
+sudo chmod 600 /root/wireguard.conf
+</source>
+
+'''Step 2:''' Enable Deluge with VPN in <code>configuration.nix</code>:
+
+<source lang="nix">
+services.deluge = {
+  enable = true;
+  declarative = true;
+  dataDir = "/var/lib/deluge";
+  
+  config = {
+    download_location = "/srv/torrents";
+    allow_remote = true;
+  };
+  
+  web = {
+    enable = true;
+    port = 8112;
+    openFirewall = true;
+  };
+  
+  vpn = {
+    enable = true;
+    namespace = "wg";
+    interface = "wg0";
+    configFile = /root/wireguard.conf;
+    ipv4Address = "10.8.0.2/24";  # Must match config file
+    # ipv6Address = "fd00::2/64";  # Optional
+  };
+};
+</source>
+
+'''Step 3:''' Rebuild system:
+
+<source lang="bash">
+sudo nixos-rebuild switch
+</source>
+
+== Access ==
+
+* '''Web UI''': <code>http://localhost:8112</code>
+* '''Default password''': <code>deluge</code> (change immediately)
+
+== Verification ==
+
+<source lang="bash">
+# Check namespace exists
+sudo ip netns list
+
+# Check WireGuard status in namespace
+sudo ip netns exec wg wg show
+
+# Verify IP (should show VPN IP, not your real IP)
+sudo ip netns exec wg curl -s https://api.ipify.org
+
+# Check services
+systemctl status deluged
+systemctl status wg
+systemctl status proxy-to-deluged
+</source>
+
+== Disable VPN ==
+
+To use Deluge without VPN isolation:
+
+<source lang="nix">
+services.deluge.vpn.enable = false;
+</source>
+
+This makes it function like a standard Deluge installation.
+
+== Documentation ==
+
+Based on:
+* <https://wiki.nixos.org/wiki/Deluge>
+* <https://discourse.nixos.org/t/setting-up-wireguard-in-a-network-namespace/10252/8>
+* <https://github.com/existentialtype/deluge-namespaced-wireguard>
 
 == Structure ==
 

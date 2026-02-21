@@ -122,6 +122,53 @@ in
         };
 
         package = mkPackageOption pkgs "deluge-2_x" { };
+
+        # VPN namespace configuration
+        vpn = {
+          enable = mkOption {
+            type = types.bool;
+            default = true;
+            description = ''
+              Enable VPN namespace isolation for Deluge.
+              Requires WireGuard configuration.
+            '';
+          };
+
+          namespace = mkOption {
+            type = types.str;
+            default = "wg";
+            description = "Name of the network namespace for VPN isolation";
+          };
+
+          interface = mkOption {
+            type = types.str;
+            default = "wg0";
+            description = "Name of the WireGuard interface";
+          };
+
+          configFile = mkOption {
+            type = types.path;
+            example = "/root/wireguard.conf";
+            description = ''
+              Path to WireGuard configuration file.
+              This file should contain the VPN credentials.
+              Keep it secure (chmod 600).
+            '';
+          };
+
+          ipv4Address = mkOption {
+            type = types.str;
+            example = "10.8.0.2/24";
+            description = "IPv4 VPN address with CIDR notation";
+          };
+
+          ipv6Address = mkOption {
+            type = types.nullOr types.str;
+            default = null;
+            example = "fd00::2/64";
+            description = "Optional IPv6 VPN address with CIDR notation";
+          };
+        };
       };
 
       deluge.web = {
