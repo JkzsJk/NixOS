@@ -83,6 +83,9 @@ in
 
         authFile = mkOption {
           type = types.path;
+          default = pkgs.writeText "deluge-auth" ''
+            localclient::10
+          '';
           example = "/run/keys/deluge-auth";
           description = ''
             The file managing the authentication for deluge, the format of this
@@ -92,6 +95,8 @@ in
             `true`.
             See <https://dev.deluge-torrent.org/wiki/UserGuide/Authentication> for
             more information.
+            
+            Default creates a localclient with no password (local connections only).
           '';
         };
 
@@ -147,7 +152,7 @@ in
           };
 
           configFile = mkOption {
-            type = types.path;
+            type = types.str;
             example = "/root/wireguard.conf";
             description = ''
               Path to WireGuard configuration file.
