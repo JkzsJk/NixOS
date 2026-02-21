@@ -42,6 +42,10 @@ in
         ExecStart = pkgs.writers.writeBash "wg-up" ''
           set -e
           
+          # Clean up any existing interface first
+          ${pkgs.iproute2}/bin/ip link del ${iface} 2>/dev/null || true
+          ${pkgs.iproute2}/bin/ip -n ${ns} link del ${iface} 2>/dev/null || true
+          
           # Create WireGuard interface and move to namespace
           ${pkgs.iproute2}/bin/ip link add ${iface} type wireguard
           ${pkgs.iproute2}/bin/ip link set ${iface} netns ${ns}
@@ -55,8 +59,10 @@ in
           ''}
           
           # Apply WireGuard configuration
-          ${pkgs.iproute2}/bin/ip netns exec ${ns} \
-            ${pkgs.wireguard-tools}/bin/wg setconf ${iface} ${cfg.vpn.configFile}
+          # Strip out non-wg fields (Address, DNS, MTU, etc.) that wg setconf doesn't understand
+          ${pkgs.gnugrep}/bin/grep -vE '^(Address|DNS|MTU|Table|PreUp|PostUp|PreDown|PostDown)\s*=' ${cfg.vpn.configFile} | \
+            ${pkgs.iproute2}/bin/ip netns exec ${ns} \
+            ${pkgs.wireguard-tools}/bin/wg setconf ${iface} /dev/stdin
           
           # Bring up interface and loopback
           ${pkgs.iproute2}/bin/ip -n ${ns} link set ${iface} up
