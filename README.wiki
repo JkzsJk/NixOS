@@ -13,9 +13,9 @@ Learning my way around NixOS.
 |-
 | 1 || Home Manager || 🚧 In Progress || Need modular user management structure, likely to be separated out into its own module.
 |-
-| 2 || Fix variables structure || To Do || You know how you can put all variables into a single file in Terraform?
+| 2 || Deluge || 🚧 In Progress || &nbsp;
 |-
-| 3 || Deluge || To Do || &nbsp;
+| 3 || Fix variables structure || To Do || You know how you can put all variables into a single file in Terraform?
 |-
 | 4 || WireGuard VPN || To Do || &nbsp;
 |-
