@@ -107,6 +107,26 @@ AllowedIPs = 0.0.0.0/0
 sudo chmod 600 /root/wireguard.conf
 </source>
 
+'''VPN Provider Examples:'''
+
+* '''Mullvad''' (~$5/month):
+*# Sign up at mullvad.net
+*# Go to "Manage" → "WireGuard configuration"
+*# Download the .conf file
+*# Update <code>ipv4Address</code> in your configuration.nix to match the <code>Address</code> line in the file
+
+<source lang="bash">
+sudo mkdir -p /root
+sudo cp ~/Downloads/mullvad-*.conf /root/wireguard.conf
+sudo chmod 600 /root/wireguard.conf
+</source>
+
+* '''ProtonVPN''' (Free tier available):
+*# Sign up at protonvpn.com
+*# Go to "Downloads" → "WireGuard configuration"
+*# Select a server location and download the config
+*# Update <code>ipv4Address</code> in your configuration.nix to match the <code>Address</code> line in the file
+
 '''Step 2:''' Enable Deluge with VPN in <code>configuration.nix</code>:
 
 <source lang="nix">
@@ -191,10 +211,14 @@ Based on:
 * <https://discourse.nixos.org/t/setting-up-wireguard-in-a-network-namespace/10252/8>
 * <https://github.com/existentialtype/deluge-namespaced-wireguard>
 
+= Native Deluge Module (02-deluge) =
+
+Standard NixOS Deluge module without VPN isolation.
+
 == Structure ==
 
 <pre>
-02-deluge-native/
+02-deluge/
   ├─ default.nix        - Entry point (imports all modules)
   ├─ 00-packages.nix    - Package configuration and extraPackages
   ├─ 01-options.nix     - Service options definitions
