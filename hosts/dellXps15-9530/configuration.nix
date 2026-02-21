@@ -196,7 +196,7 @@
     enable = true;
     touchpad = {
       tapping = true;
-      naturalScrolling = true;
+      naturalScrolling = false; # False = Windows-style scrolling, True = macOS-style scrolling
       disableWhileTyping = true;
       accelSpeed = "0.5";
     };
