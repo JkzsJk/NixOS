@@ -36,7 +36,7 @@ in
           '';
           description = ''
             Deluge core configuration for the core.conf file. Only has an effect
-            when {option}`services.deluge.declarative` is set to
+            when {option}`myServices.deluge.declarative` is set to
             `true`. String values must be quoted, integer and
             boolean values must not. See
             <https://git.deluge-torrent.org/deluge/tree/deluge/core/preferencesmanager.py#n41>
@@ -50,9 +50,9 @@ in
           description = ''
             Whether to use a declarative deluge configuration.
             Only if set to `true`, the options
-            {option}`services.deluge.config`,
-            {option}`services.deluge.openFirewall` and
-            {option}`services.deluge.authFile` will be
+            {option}`myServices.deluge.config`,
+            {option}`myServices.deluge.openFirewall` and
+            {option}`myServices.deluge.authFile` will be
             applied.
           '';
         };
@@ -62,8 +62,8 @@ in
           type = types.bool;
           description = ''
             Whether to open the firewall for the ports in
-            {option}`services.deluge.config.listen_ports`. It only takes effect if
-            {option}`services.deluge.declarative` is set to
+            {option}`myServices.deluge.config.listen_ports`. It only takes effect if
+            {option}`myServices.deluge.declarative` is set to
             `true`.
 
             It does NOT apply to the daemon port nor the web UI port. To access those
@@ -88,7 +88,7 @@ in
             The file managing the authentication for deluge, the format of this
             file is straightforward, each line contains a
             username:password:level tuple in plaintext. It only has an effect
-            when {option}`services.deluge.declarative` is set to
+            when {option}`myServices.deluge.declarative` is set to
             `true`.
             See <https://dev.deluge-torrent.org/wiki/UserGuide/Authentication> for
             more information.

@@ -10,6 +10,18 @@ let
 in
 {
   config = mkIf (cfg.enable && cfg.vpn.enable) {
+    # Assertions for VPN requirements
+    assertions = [
+      {
+        assertion = cfg.vpn.configFile != null;
+        message = "myServices.deluge.vpn.configFile must be set when VPN is enabled";
+      }
+      {
+        assertion = cfg.vpn.ipv4Address != null && cfg.vpn.ipv4Address != "";
+        message = "myServices.deluge.vpn.ipv4Address must be set when VPN is enabled";
+      }
+    ];
+
     # Add wireguard-tools to system packages
     environment.systemPackages = with pkgs; [
       wireguard-tools
