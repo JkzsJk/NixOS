@@ -13,23 +13,23 @@ Learning my way around NixOS.
 |-
 | 1 || Home Manager || 🚧 In Progress || Need modular user management structure, likely to be separated out into its own module.
 |-
-| 2 || Deluge || 🚧 In Progress || &nbsp;
+| 2 || Fix variables structure || To Do || You know how you can put all variables into a single file in Terraform?
 |-
-| 3 || Fix variables structure || To Do || You know how you can put all variables into a single file in Terraform?
+| 3 || WireGuard VPN || To Do || &nbsp;
 |-
-| 4 || WireGuard VPN || To Do || &nbsp;
+| 4 || Immich || To Do || &nbsp;
 |-
-| 5 || Immich || To Do || &nbsp;
+| 5 || Terraform || To Do || &nbsp;
 |-
-| 6 || Terraform || To Do || &nbsp;
+| 6 || Podman || To Do || &nbsp;
 |-
-| 7 || Podman || To Do || &nbsp;
+| 7 || Kubernetes || To Do || &nbsp;
 |-
-| 8 || Kubernetes || To Do || &nbsp;
+| 8 || HomeLab || To Do || &nbsp;
 |-
-| 9 || HomeLab || To Do || &nbsp;
+| 9 || .dotfiles || To Do || &nbsp;
 |-
-| 10 || .dotfiles || To Do || &nbsp;
+| 10 || Deluge || ✅ Done || &nbsp;
 |-
 | 11 || RQuickShare || ✅ Done || &nbsp;
 |-
