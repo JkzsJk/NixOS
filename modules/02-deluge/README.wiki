@@ -221,6 +221,59 @@ systemctl status deluged delugeweb
 
 '''Kill Switch Test:''' If VPN disconnects, Deluge will stop downloading (no internet access).
 
+== Preventing IP Leaks ==
+
+=== The Problem ===
+
+The VPN namespace isolation '''only protects the deluged daemon'''. If you run a standalone Deluge desktop client (like <code>deluge-gtk</code>), it can bypass the VPN and leak your real IP address.
+
+'''How to verify:'''
+* Use ipleak.net's "Torrent Address detection test"
+* Download the test torrent and add it to Deluge
+* Check what IP ipleak reports - should be your VPN IP, not your real IP
+
+=== Safe Usage ===
+
+To ensure all torrent traffic goes through the VPN:
+
+'''Option 1: Use the Web UI (Recommended)'''
+* Access Deluge at <code>http://localhost:8112</code>
+* Never launch <code>deluge-gtk</code>
+
+'''Option 2: Configure deluge-gtk as a Thin Client'''
+
+If you prefer the desktop app:
+# Open <code>deluge-gtk</code>
+# Go to Preferences → Interface
+# Enable "Thin Client" mode
+# Under Connection Manager, connect to <code>localhost:58846</code>
+# Restart <code>deluge-gtk</code>
+
+This makes deluge-gtk just a remote control that connects to your VPN-protected daemon.
+
+=== Firewall Killswitch ===
+
+The module includes a killswitch (in <code>05-firewall.nix</code>) that blocks BitTorrent traffic from the deluge user outside the VPN namespace. This prevents:
+* The daemon from leaking if misconfigured
+* <code>deluge-gtk</code> running as the deluge user from bypassing the VPN
+
+'''Note:''' If you run <code>deluge-gtk</code> as your regular user, the killswitch won't block it. Use thin client mode or the web UI instead.
+
+=== Testing for Leaks ===
+
+<source lang="bash">
+# 1. Check what IP the daemon sees (should be VPN IP)
+sudo ip netns exec wg curl -s https://api.ipify.org
+
+# 2. Check your real IP (should be different)
+curl -s https://api.ipify.org
+
+# 3. Check for standalone Deluge instances (should be empty)
+sudo ss -tlnp | grep -E "6881|6889|61300" | grep deluge
+</source>
+
+If step 3 shows any <code>deluge-gtk</code> listening on your network interface, you're leaking. Close it and use the web UI or thin client mode.
+
 == Validation ==
 
 The module enforces these requirements when VPN is enabled:
@@ -233,9 +286,9 @@ If you try to enable the module without these, you'll get assertion errors at bu
 == Documentation ==
 
 Based on:
-* <https://wiki.nixos.org/wiki/Deluge>
-* <https://discourse.nixos.org/t/setting-up-wireguard-in-a-network-namespace/10252/8>
-* <https://github.com/existentialtype/deluge-namespaced-wireguard>
+* [https://wiki.nixos.org/wiki/Deluge Deluge - Official NixOS Wiki]
+* [https://discourse.nixos.org/t/setting-up-wireguard-in-a-network-namespace/10252/8 Setting up WireGuard in a network namespace for selectively routing traffic through VPN - #8 by kylegentle - Help - NixOS Discourse]
+* [https://github.com/existentialtype/deluge-namespaced-wireguard existentialtype/deluge-namespaced-wireguard: Running Deluge on Linux behind WireGuard in isolated namespace]
 
 = Native Deluge Module (02-deluge) =
 
