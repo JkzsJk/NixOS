@@ -349,7 +349,7 @@
     };
     
     vpn = {
-      # enable = true;  # Already defaults to true
+      # enable = true;
       configFile = "/root/wireguard.conf";
       ipv4Address = "10.2.0.2/32";  # Must match your VPN config
     };

@@ -132,7 +132,7 @@ in
         vpn = {
           enable = mkOption {
             type = types.bool;
-            default = true;
+            default = false;
             description = ''
               Enable VPN namespace isolation for Deluge.
               Requires WireGuard configuration.

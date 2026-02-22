@@ -166,6 +166,34 @@ myServices.deluge = {
 sudo nixos-rebuild switch
 </source>
 
+=== VPN Provider Recommendations (as of 20260222-1657) ===
+
+<div class="mw-collapsible mw-collapsed">
+<div class="mw-collapsible-content">
+
+'''Free VPN Services:'''
+
+Most free VPNs restrict P2P or throttle bandwidth heavily. Few viable options:
+
+* '''Windscribe Free:''' P2P allowed but only 10-15GB/month data cap (insufficient for serious torrenting)
+* '''ProtonVPN Free:''' P2P/torrenting not allowed (only on paid tiers)
+
+'''Paid VPN Services (Recommended):'''
+
+For reliable P2P torrenting, paid VPNs are necessary:
+
+* '''Mullvad:''' €5/month (~$5.30) - Excellent privacy, P2P allowed, WireGuard support
+* '''ProtonVPN:''' $4-10/month - P2P allowed on all paid tiers, free tier available (no P2P)
+* '''IVPN:''' $6-10/month - Privacy-focused, P2P allowed
+
+'''Why paid VPNs are necessary for P2P:'''
+* P2P uses massive bandwidth
+* Bandwidth costs money to operate
+* Free services must limit via speed throttling, data caps, or blocking P2P entirely
+
+</div>
+</div>
+
 == Access ==
 
 * '''Web UI''': <code>http://localhost:8112</code>
