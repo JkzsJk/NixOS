@@ -51,7 +51,9 @@ Learning my way around NixOS.
 |-
 | 2 || Jellyfin Directory || To Do || Include `shows` directory into the code.
 |-
-| 3 || Fix variables structure || To Do || You know how you can put all variables into a single file in Terraform?
+| 3 || Versions (Auto) Upgrade || To Do || Figure out how to enable auto version upgrade for the OS and applications.
+|-
+| 4 || Fix variables structure || To Do || You know how you can put all variables into a single file in Terraform?
 |}
 
 == References ==
