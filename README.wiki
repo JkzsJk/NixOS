@@ -3,6 +3,7 @@ Learning my way around NixOS.
 
 == Table of Contents ==
 # [[#to-dos|To-Do's]]
+# [[#miscellaneous-enhancement|Miscellaneous Enhancement]]
 # [[#references|References]]
 
 == To-Do's ==
@@ -13,33 +14,42 @@ Learning my way around NixOS.
 |-
 | 1 || Home Manager || 🚧 In Progress || Need modular user management structure, likely to be separated out into its own module.
 |-
+| 2 || Immich || To Do || &nbsp;
+|-
+| 3 || Terraform || To Do || &nbsp;
+|-
+| 4 || Podman || To Do || &nbsp;
+|-
+| 5 || Kubernetes || To Do || &nbsp;
+|-
+| 6 || HomeLab || To Do || &nbsp;
+|-
+| 7 || .dotfiles || To Do || &nbsp;
+|-
+| 8 || WireGuard VPN || ✅ Done || Done as part of Deluge module, works in separate namespace, only Deluge traffic goes through VPN but not the rest of the system.
+|-
+| 9 || Deluge || ✅ Done || &nbsp;
+|-
+| 10 || RQuickShare || ✅ Done || &nbsp;
+|-
+| 11 || Jellyfin || ✅ Done || &nbsp;
+|-
+| 12 || ZOXide || ✅ Done || &nbsp;
+|-
+| 13 || fzf || ✅ Done || &nbsp;
+|-
+| 14 || Default shell/Zsh with Powerline || ✅ Done || &nbsp;
+|}
+
+== Miscellaneous Enhancement ==
+
+{| class="wikitable"
+|-
+! &#35; !! Task !! Status !! Remarks
+|-
+| 1 || Jellyfin Plugins || To Do || Must-have plugins & to codify them too (as part of <code>01-jellyfin</code> module).
+|-
 | 2 || Fix variables structure || To Do || You know how you can put all variables into a single file in Terraform?
-|-
-| 3 || Immich || To Do || &nbsp;
-|-
-| 4 || Terraform || To Do || &nbsp;
-|-
-| 5 || Podman || To Do || &nbsp;
-|-
-| 6 || Kubernetes || To Do || &nbsp;
-|-
-| 7 || HomeLab || To Do || &nbsp;
-|-
-| 8 || .dotfiles || To Do || &nbsp;
-|-
-| 9 || WireGuard VPN || ✅ Done || Done as part of Deluge module, works in separate namespace, only Deluge traffic goes through VPN but not the rest of the system.
-|-
-| 10 || Deluge || ✅ Done || &nbsp;
-|-
-| 11 || RQuickShare || ✅ Done || &nbsp;
-|-
-| 12 || Jellyfin || ✅ Done || &nbsp;
-|-
-| 13 || ZOXide || ✅ Done || &nbsp;
-|-
-| 14 || fzf || ✅ Done || &nbsp;
-|-
-| 15 || Default shell/Zsh with Powerline || ✅ Done || &nbsp;
 |}
 
 == References ==
