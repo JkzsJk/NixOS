@@ -26,7 +26,7 @@ Learning my way around NixOS.
 |-
 | 7 || .dotfiles || To Do || &nbsp;
 |-
-| 8 || WireGuard VPN || ✅ Done || Done as part of Deluge module, works in separate namespace, only Deluge traffic goes through VPN but not the rest of the system.
+| 8 || WireGuard VPN || ✅ Done || Done as part of Deluge module, works in separate namespace, only Deluge traffic goes through VPN but not the rest of the system. Disabled entirely/not installed due to unable to find (i.e. unwilling to pay for) suitable VPN provider currently.
 |-
 | 9 || Deluge || ✅ Done || &nbsp;
 |-
