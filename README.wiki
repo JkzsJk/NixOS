@@ -49,7 +49,9 @@ Learning my way around NixOS.
 |-
 | 1 || Jellyfin Plugins || To Do || Must-have plugins & to codify them too (as part of <code>01-jellyfin</code> module).
 |-
-| 2 || Fix variables structure || To Do || You know how you can put all variables into a single file in Terraform?
+| 2 || Jellyfin Directory || To Do || Include `shows` directory into the code.
+|-
+| 3 || Fix variables structure || To Do || You know how you can put all variables into a single file in Terraform?
 |}
 
 == References ==
