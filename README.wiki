@@ -26,19 +26,21 @@ Learning my way around NixOS.
 |-
 | 7 || .dotfiles || To Do || &nbsp;
 |-
-| 8 || WireGuard VPN || ✅ Done || Done as part of Deluge module, works in separate namespace, only Deluge traffic goes through VPN but not the rest of the system. Disabled entirely/not installed due to unable to find (i.e. unwilling to pay for) suitable VPN provider currently.
+| 8 || Include WSL || To Do || Try to include WSL builds in this repository.
 |-
-| 9 || Deluge || ✅ Done || &nbsp;
+| 9 || WireGuard VPN || ✅ Done || Done as part of Deluge module, works in separate namespace, only Deluge traffic goes through VPN but not the rest of the system. Disabled entirely/not installed due to unable to find (i.e. unwilling to pay for) suitable VPN provider currently.
 |-
-| 10 || RQuickShare || ✅ Done || &nbsp;
+| 10 || Deluge || ✅ Done || &nbsp;
 |-
-| 11 || Jellyfin || ✅ Done || &nbsp;
+| 11 || RQuickShare || ✅ Done || &nbsp;
 |-
-| 12 || ZOXide || ✅ Done || &nbsp;
+| 12 || Jellyfin || ✅ Done || &nbsp;
 |-
-| 13 || fzf || ✅ Done || &nbsp;
+| 13 || ZOXide || ✅ Done || &nbsp;
 |-
-| 14 || Default shell/Zsh with Powerline || ✅ Done || &nbsp;
+| 14 || fzf || ✅ Done || &nbsp;
+|-
+| 15 || Default shell/Zsh with Powerline || ✅ Done || &nbsp;
 |}
 
 == Miscellaneous Enhancement ==
