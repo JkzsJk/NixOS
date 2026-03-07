@@ -322,7 +322,7 @@ myServices.jellyfin = {
   watchUsername = "jason";
   mediaLibraries = [
     "/mnt/media/movies"
-    "/mnt/media/tv-shows"
+    "/mnt/media/shows"
     "/mnt/media/music"
   ];
 };

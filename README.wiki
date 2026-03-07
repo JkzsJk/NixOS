@@ -49,11 +49,11 @@ Learning my way around NixOS.
 |-
 | 1 || Jellyfin Plugins || To Do || Must-have plugins & to codify them too (as part of <code>01-jellyfin</code> module).
 |-
-| 2 || Jellyfin Directory || To Do || Include `shows` directory into the code.
+| 2 || Versions (Auto) Upgrade || To Do || Figure out how to enable auto version upgrade for the OS and applications.
 |-
-| 3 || Versions (Auto) Upgrade || To Do || Figure out how to enable auto version upgrade for the OS and applications.
+| 3 || Fix variables structure || To Do || You know how you can put all variables into a single file in Terraform?
 |-
-| 4 || Fix variables structure || To Do || You know how you can put all variables into a single file in Terraform?
+| 4 || Jellyfin Directory || ✅ Done || Include `shows` directory into the code.
 |}
 
 == References ==
