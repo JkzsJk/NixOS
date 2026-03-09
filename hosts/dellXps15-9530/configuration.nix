@@ -11,7 +11,11 @@
       ../../modules/00-common
       ../../modules/01-jellyfin
       ../../modules/02-deluge
+      ../../modules/03-hyprland
     ];
+
+  # Enable Hyprland Wayland compositor (select at SDDM login)
+  myDesktop.hyprland.enable = true;
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
