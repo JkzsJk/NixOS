@@ -10,7 +10,6 @@ in
   config = mkIf cfg.enable {
     programs.hyprland = {
       enable = true;
-      nvidiaPatches = true;  # Enable NVIDIA support (requires Hyprland with patches)
       xwayland.enable = true;
     };
 
@@ -22,12 +21,6 @@ in
     };
 
     hardware = {
-      # OpenGL
-      opengl.enable = true;
-
-      # Most Wayland Compositors need this
-      nvidia.modesetting.enable = true;
-
       # Required for Wayland compositors
       graphics.enable = true;
     };
