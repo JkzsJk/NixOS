@@ -11,6 +11,33 @@ in
 {
   config = mkIf cfg.enable {
     home-manager.users.${cfg.user} = {
+      # Wallpapers — sourced from the repo, linked into ~/Wallpapers/ on rebuild
+      home.file."Wallpapers/gow-ragnarok-fimbulwinter.jpg".source =
+        ./wallpapers/gow-ragnarok-fimbulwinter.jpg;
+
+      home.file.".config/hypr/start.sh" = {
+        executable = true;
+        text = ''
+          #!/usr/bin/env bash
+
+          # Initialise wallpaper daemon
+          swww-daemon &
+          sleep 1  # wait for daemon socket before setting image
+
+          # Set wallpaper
+          swww img ~/Wallpapers/gow-ragnarok-fimbulwinter.jpg &
+
+          # Network manager tray applet
+          nm-applet --indicator &
+
+          # Status bar
+          waybar &
+
+          # Notifications
+          mako &
+        '';
+      };
+
       home.file.".config/hypr/hyprland.conf".text = ''
         # ======================================================================
         #  hyprland.conf — managed by NixOS (modules/03-hyprland/04-config.nix)
@@ -22,10 +49,7 @@ in
         monitor=,preferred,auto,1
 
         # ── Autostart ─────────────────────────────────────────────────────────
-        exec-once = waybar
-        exec-once = mako
-        exec-once = swww-daemon
-        exec-once = nm-applet --indicator
+        exec-once = bash ~/.config/hypr/start.sh
 
         # ── Variables ─────────────────────────────────────────────────────────
         $mainMod  = SUPER
