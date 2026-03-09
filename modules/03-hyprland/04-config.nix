@@ -49,7 +49,9 @@ in
         # ── Monitors ──────────────────────────────────────────────────────────
         # Format: monitor=<name>,<resolution>@<hz>,<position>,<scale>
         # Use "hyprctl monitors" to list available monitors.
-        monitor=,preferred,auto,1
+        # Scale: 1 = native, 1.5 = 150% (2133x1200 effective), 2 = 200% (1600x900 effective)
+        ## This is for Dell XPS 15 9530's 3K display; adjust as needed for your setup!
+        monitor=eDP-1,3200x1800@60,0x0,1.25
 
         # ── Autostart ─────────────────────────────────────────────────────────
         exec-once = bash ~/.config/hypr/start.sh
@@ -135,29 +137,33 @@ in
 
         # ── Input ─────────────────────────────────────────────────────────────
         input {
-            kb_layout   = us
+            kb_layout    = us
             follow_mouse = 1
-            sensitivity  = 0          # -1.0 to 1.0; 0 = no modification
+            sensitivity  = 0.4          # -1.0 to 1.0; 0 = no modification
 
             touchpad {
                 natural_scroll = false
-                workspace_swipe = false
             }
         }
+
+        # ── Gestures ──────────────────────────────────────────────────────────
+        # Syntax: gesture = <fingers>, <direction>, <action>
+        gesture = 3, horizontal, workspace  # 3-finger swipe to switch workspaces
 
         # ── Keybinds ──────────────────────────────────────────────────────────
 
         # Apps
         bind = $mainMod,       Return, exec,         $terminal
-        bind = $mainMod,       S,      exec,         $menu
+        bind = $mainMod,       R,      exec,         $menu
         bind = $mainMod,       E,      exec,         dolphin
 
         # Window management
-        bind = $mainMod,       C,      killactive
+        bind = $mainMod,       Q,      killactive
         bind = $mainMod,       V,      togglefloating
         bind = $mainMod,       P,      pseudo
         bind = $mainMod,       J,      togglesplit
-        bind = $mainMod SHIFT, E,      exit
+        bind = $mainMod,       L,      exec,         hyprlock
+        bind = $mainMod SHIFT, M,      exit
 
         # Focus — arrow keys
         bind = $mainMod, left,  movefocus, l
