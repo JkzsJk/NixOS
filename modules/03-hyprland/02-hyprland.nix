@@ -31,4 +31,5 @@ in
       # Required for Wayland compositors
       graphics.enable = true;
     };
+  };
 }

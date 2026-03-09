@@ -45,6 +45,6 @@ in
       mako                   # Notification daemon (lightweight, designed for Wayland)
 
       libnotify               # Library for sending notifications (used by some apps to send notifications on Wayland)
-    ]
+    ];
   };
 }
