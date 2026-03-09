@@ -16,6 +16,7 @@ in
         ./wallpapers/gow-ragnarok-fimbulwinter.jpg;
 
       home.file.".config/hypr/start.sh" = {
+        force      = true;
         executable = true;
         text = ''
           #!/usr/bin/env bash
@@ -127,6 +128,11 @@ in
             disable_hyprland_logo   = true
         }
 
+        # ── Ecosystem ─────────────────────────────────────────────────────────
+        ecosystem {
+            no_update_news = true
+        }
+
         # ── Input ─────────────────────────────────────────────────────────────
         input {
             kb_layout   = us
@@ -135,11 +141,8 @@ in
 
             touchpad {
                 natural_scroll = false
+                workspace_swipe = false
             }
-        }
-
-        gestures {
-            workspace_swipe = false
         }
 
         # ── Keybinds ──────────────────────────────────────────────────────────
