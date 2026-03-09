@@ -17,7 +17,7 @@ in
       waybar
 
       # App launcher
-      rofi-wayland           # Wayland-native rofi
+      rofi                   # App launcher (Wayland support merged in)
 
       # Notifications
       mako                   # Lightweight notification daemon
