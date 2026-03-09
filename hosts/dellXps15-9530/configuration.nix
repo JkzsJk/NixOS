@@ -327,6 +327,7 @@
     mediaLibraries = [
       "/srv/media"
       "/srv/media/movies"
+      "/srv/media/shows"
       "/srv/media/music"
     ];  # System media directory (FHS compliant)
   };
