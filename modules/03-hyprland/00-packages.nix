@@ -11,10 +11,12 @@ in
     environment.systemPackages = with pkgs; [
       # Wayland essentials
       wl-clipboard           # Clipboard (wl-copy / wl-paste)
-      kitty                  # Terminal emulator (Hyprland default)
+      kitty                  # Terminal emulator (Hyprland's default)
 
-      # Status bar
-      waybar
+      # Status bar (with experimental features enabled for calendar popup etc.)
+      (pkgs.waybar.overrideAttrs (oldAttrs: {
+        mesonFlags = oldAttrs.mesonFlags ++ [ "-Dexperimental=true" ];
+      }))
 
       # App launcher
       rofi                   # App launcher (Wayland support merged in)
@@ -35,6 +37,14 @@ in
 
       # File manager
       networkmanagerapplet   # Network manager tray icon
-    ];
+
+      eww                    # Widget system (for custom status bars, etc.
+
+      dunst                  # Notification daemon (alternative to mako, can be used if you want more customization options)
+
+      mako                   # Notification daemon (lightweight, designed for Wayland)
+
+      libnotify               # Library for sending notifications (used by some apps to send notifications on Wayland)
+    ]
   };
 }

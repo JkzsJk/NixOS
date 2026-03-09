@@ -16,7 +16,7 @@ Hyprland Wayland compositor with companion tools.
 == Packages Included ==
 
 * '''waybar''' - Status bar
-* '''rofi-wayland''' - App launcher (bind: <code>$mainMod + S</code>)
+* '''rofi''' - App launcher (bind: <code>$mainMod + S</code>, rofi-wayland merged into rofi as of NixOS 25.11)
 * '''mako''' - Notification daemon
 * '''kitty''' - Terminal emulator (Hyprland default)
 * '''wl-clipboard''' - Clipboard support (wl-copy / wl-paste)
@@ -46,8 +46,10 @@ myDesktop.hyprland.enable = true;
 
 == Notes ==
 
-* '''GPU:''' Hyprland runs on Intel HD 4600 (NVIDIA GT 750M legacy_470 does not support Wayland)
-* '''Dual Desktop:''' Can coexist with KDE Plasma 6 — choose at SDDM login
+* '''GPU:''' Both GPUs in Dell XPS 15 9530 have limited Wayland support:
+** '''NVIDIA GT 750M''' (legacy_470 driver) — no Wayland support
+** '''Intel HD 4600''' (Haswell) — below Hyprland's stated minimums (requires Vulkan 1.1, HD 4600 only supports 1.0). May work with recent Mesa but not guaranteed.
+* '''Dual Desktop:''' Can coexist with KDE Plasma 6 — choose at SDDM login. If Hyprland fails to start, just select KDE Plasma instead.
 * '''Audio:''' Uses existing Pipewire configuration (no duplication)
 * '''Graphics:''' Uses existing <code>hardware.graphics.enable</code> (no duplication)
 

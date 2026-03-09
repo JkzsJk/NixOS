@@ -4,6 +4,9 @@
 
 { config, pkgs, ... }:
 
+let
+  primaryUser = "jason";
+in
 {
   imports =
     [ # Include the results of the hardware scan.
@@ -16,6 +19,7 @@
 
   # Enable Hyprland Wayland compositor (select at SDDM login)
   myDesktop.hyprland.enable = true;
+  myDesktop.hyprland.user   = primaryUser;
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -249,6 +253,7 @@
   security.rtkit.enable = true;
 
   # Enable sound with pipewire.
+  sound.enable = true;
   services.pipewire = {
     enable = true;
     alsa = {
@@ -272,7 +277,7 @@
   # services.xserver.libinput.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.jason = {
+  users.users.${primaryUser} = {
     isNormalUser = true;
     description = "Jason K.";
     extraGroups = [ "networkmanager" "wheel" "media" ];
@@ -286,7 +291,7 @@
   # Allow jason to run nixos-rebuild and nix commands without sudo password
   security.sudo.extraRules = [
     {
-      users = [ "jason" ];    # Add users here, e.g. users = [ "jason" "alice" "bob" ];
+      users = [ primaryUser ];
       commands = [
         {
           command = "${pkgs.nixos-rebuild}/bin/nixos-rebuild";
@@ -297,7 +302,7 @@
   ];
 
   # Trust jason for nix daemon operations
-  nix.settings.trusted-users = [ "root" "jason" ];
+  nix.settings.trusted-users = [ "root" primaryUser ];
   # Install Firefox.
   programs.firefox.enable = true;
 
@@ -327,7 +332,7 @@
   myServices.jellyfin = {
     enable = true;
     openFirewall = true;  # Opens ports 8096, 8920, 1900, 7359
-    watchUsername = "jason";  # User who manages media files
+    watchUsername = primaryUser;
     mediaLibraries = [
       "/srv/media"
       "/srv/media/movies"
