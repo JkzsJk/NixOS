@@ -44,6 +44,39 @@ myDesktop.hyprland.enable = true;
 
 '''Step 3:''' Rebuild and select Hyprland at login screen (SDDM).
 
+== TODO: Machine-Specific Config ==
+
+Currently, some values in <code>04-config.nix</code> are hardcoded directly into the generated <code>hyprland.conf</code> — things like the monitor name (<code>eDP-1</code>), resolution, refresh rate, scale, and input sensitivity. This is fine for now but should be improved.
+
+The goal is: '''module logic stays in the module, machine-specific values get declared in the host config file.'''
+
+For example, instead of hardcoding:
+<source lang="nix">
+monitor=eDP-1,3200x1800@60,0x0,1.25
+</source>
+
+the module should expose options like <code>myDesktop.hyprland.monitor</code>, <code>myDesktop.hyprland.scale</code>, etc., and the host's <code>configuration.nix</code> sets them:
+<source lang="nix">
+myDesktop.hyprland.monitor = "eDP-1";
+myDesktop.hyprland.resolution = "3200x1800@60";
+myDesktop.hyprland.scale = 1.25;
+</source>
+
+This makes the module reusable across machines without editing module source.
+
+== TODO: Per-Application Scaling ==
+
+Different apps render at inconsistent sizes — some appear too large, others too small, depending on whether they respect the Wayland scale factor or fall back to XWayland/X11 behaviour.
+
+The fix involves setting the correct environment variables and per-app overrides. Relevant levers:
+
+* <code>GDK_SCALE</code> / <code>GDK_DPI_SCALE</code> — for GTK apps
+* <code>QT_SCALE_FACTOR</code> — for Qt/KDE apps
+* <code>XCURSOR_SIZE</code> — cursor size consistency across XWayland apps
+* <code>xwayland { force_zero_scaling = true; }</code> in <code>hyprland.conf</code> — prevents XWayland from inheriting the Wayland scale and double-scaling
+
+These should be set in <code>02-hyprland.nix</code> via <code>environment.sessionVariables</code> and the <code>hyprland.conf</code> <code>xwayland</code> block in <code>04-config.nix</code>.
+
 == Notes ==
 
 * '''GPU:''' Both GPUs in Dell XPS 15 9530 have limited Wayland support:
