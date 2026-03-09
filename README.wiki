@@ -12,11 +12,11 @@ Learning my way around NixOS.
 |-
 ! &#35; !! Task !! Status !! Remarks
 |-
-| 1 || Home Manager || 🚧 In Progress || Need modular user management structure, likely to be separated out into its own module.
+| 1 || Hyprland || 🚧 In Progress || To replace KDE Plasma?
 |-
-| 2 || Neofetch || To Do || &nbsp;
+| 2 || Home Manager || 🚧 In Progress || Need modular user management structure, likely to be separated out into its own module.
 |-
-| 3 || Hyprland || To Do || To replace KDE Plasma?
+| 3 || Neofetch || 🚧 In Progress || &nbsp;
 |-
 | 4 || Immich || To Do || &nbsp;
 |-
@@ -59,7 +59,7 @@ Learning my way around NixOS.
 |-
 | 3 || Fix variables structure || To Do || You know how you can put all variables into a single file in Terraform?
 |-
-| 4 || Jellyfin Directory || ✅ Done || Include `shows` directory into the code.
+| 4 || Jellyfin Directory || ✅ Done || Include <code>shows</code> directory into the code.
 |}
 
 == References ==

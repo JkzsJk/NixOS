@@ -1,0 +1,72 @@
+= Hyprland Module =
+
+Hyprland Wayland compositor with companion tools.
+
+== Structure ==
+
+<pre>
+03-hyprland/
+  ├─ default.nix        - Entry point (imports all modules)
+  ├─ 00-packages.nix    - Companion packages (waybar, rofi, mako, etc.)
+  ├─ 01-options.nix     - Module options (enable toggle)
+  ├─ 02-hyprland.nix    - Hyprland compositor + session variables
+  └─ 03-xdg.nix         - XDG desktop portal
+</pre>
+
+== Packages Included ==
+
+* '''waybar''' - Status bar
+* '''rofi-wayland''' - App launcher (bind: <code>$mainMod + S</code>)
+* '''mako''' - Notification daemon
+* '''kitty''' - Terminal emulator (Hyprland default)
+* '''wl-clipboard''' - Clipboard support (wl-copy / wl-paste)
+* '''swww''' - Wallpaper daemon
+* '''grim''' + '''slurp''' - Screenshots
+* '''hyprlock''' - Screen lock
+* '''hypridle''' - Idle management
+* '''networkmanagerapplet''' - Network tray icon
+
+== Usage ==
+
+'''Step 1:''' Import the module in your host config:
+
+<source lang="nix">
+imports = [
+  ../../modules/03-hyprland
+];
+</source>
+
+'''Step 2:''' Enable Hyprland:
+
+<source lang="nix">
+myDesktop.hyprland.enable = true;
+</source>
+
+'''Step 3:''' Rebuild and select Hyprland at login screen (SDDM).
+
+== Notes ==
+
+* '''GPU:''' Hyprland runs on Intel HD 4600 (NVIDIA GT 750M legacy_470 does not support Wayland)
+* '''Dual Desktop:''' Can coexist with KDE Plasma 6 — choose at SDDM login
+* '''Audio:''' Uses existing Pipewire configuration (no duplication)
+* '''Graphics:''' Uses existing <code>hardware.graphics.enable</code> (no duplication)
+
+== Keybind Example ==
+
+Add to <code>~/.config/hypr/hyprland.conf</code>:
+
+<source lang="ini">
+$mainMod = SUPER
+
+bind = $mainMod, S, exec, rofi -show drun -show-icons
+bind = $mainMod, Return, exec, kitty
+bind = $mainMod, Q, killactive
+bind = $mainMod, M, exit
+</source>
+
+== Documentation ==
+
+Based on:
+* https://www.youtube.com/watch?v=61wGzIv12Ds
+* https://wiki.hyprland.org/Nix/
+* https://wiki.hyprland.org/Getting-Started/Master-Tutorial/

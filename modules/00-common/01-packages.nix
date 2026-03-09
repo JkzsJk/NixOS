@@ -22,6 +22,7 @@
     fzf
     home-manager
     pciutils        # lspci for hardware info
+    neofetch        # System info display
     
     # Cloud/Container tools
     k9s
