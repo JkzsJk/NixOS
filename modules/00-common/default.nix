@@ -1,5 +1,5 @@
 # Shared configuration across all hosts
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, ... }:
 
 {
   imports = [

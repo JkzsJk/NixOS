@@ -1,5 +1,5 @@
 # Common system packages for all machines
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, ... }:
 
 {
   # Add Jellyfin and utilities to system packages

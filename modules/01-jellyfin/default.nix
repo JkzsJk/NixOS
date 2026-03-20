@@ -1,5 +1,5 @@
 # Jellyfin module - auto-imports all configuration files
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, ... }:
 
 {
   imports = [

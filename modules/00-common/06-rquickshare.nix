@@ -1,5 +1,5 @@
 # RQuickShare configuration
-{ config, pkgs, lib, ... }:
+{ config, pkgs, inputs, lib, ... }:
 
 {
   # Wrap rquickshare with environment variable

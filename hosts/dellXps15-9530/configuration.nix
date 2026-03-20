@@ -2,19 +2,15 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, ... }:
 
 let
   primaryUser = "jason";
 in
 {
   imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-      ../../modules/00-common
-      ../../modules/01-jellyfin
-      ../../modules/02-deluge
-      ../../modules/03-hyprland
+    [
+      ./hardware-configuration.nix    # Include the results of the hardware scan.
     ];
 
   # Enable Hyprland Wayland compositor (select at SDDM login)

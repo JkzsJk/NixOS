@@ -1,5 +1,5 @@
 # Home Manager user configurations
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, ... }:
 
 {
   home-manager.users = {

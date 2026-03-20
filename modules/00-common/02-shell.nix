@@ -1,5 +1,5 @@
 # Shell configurations (Zsh, Bash, Fish)
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, ... }:
 
 {
   # Set Zsh as default shell for all users

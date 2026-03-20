@@ -1,5 +1,5 @@
 # LocalSend configuration
-{ config, pkgs, lib, ... }:
+{ config, pkgs, inputs, lib, ... }:
 
 let
   localsendPort = 53317;  # Default LocalSend port

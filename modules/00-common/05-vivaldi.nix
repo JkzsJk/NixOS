@@ -1,5 +1,5 @@
 # Default browser configuration
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, ... }:
 
 {
   # Set Vivaldi as default browser

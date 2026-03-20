@@ -1,5 +1,5 @@
 # Deluge module - VPN-isolated deluge service with WireGuard
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, ... }:
 
 {
   imports = [

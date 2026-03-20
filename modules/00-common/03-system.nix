@@ -1,12 +1,9 @@
 # System-wide Nix configuration
-{ config, pkgs, ... }:
+{ config, pkgs, inputs... }:
 
 {
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
-
-  # Enable experimental features (flakes and nix-command)
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   # Automatic system upgrades for all machines
   system.autoUpgrade = {
