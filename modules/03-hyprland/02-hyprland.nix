@@ -24,5 +24,12 @@ in
       # Required for Wayland compositors
       graphics.enable = true;
     };
+
+    # Secrets/keyring daemon — required for browser saved passwords, Warp, etc.
+    # Without this, apps using libsecret have nowhere to store credentials.
+    services.gnome.gnome-keyring.enable = true;
+
+    # Unlock the keyring automatically on SDDM login
+    security.pam.services.sddm.enableGnomeKeyring = true;
   };
 }

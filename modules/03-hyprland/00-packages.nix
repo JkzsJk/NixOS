@@ -35,6 +35,10 @@ in
       # Hint / help viewer
       bat                    # Syntax-highlighted file viewer (Super+H hint window)
 
+      # Secrets / keyring
+      gnome-keyring          # Secrets daemon (libsecret backend for browsers, Warp, etc.)
+      libsecret              # Library apps use to talk to the keyring
+
       # Screen locking
       hyprlock               # Hyprland's lock screen
       hypridle               # Idle management daemon

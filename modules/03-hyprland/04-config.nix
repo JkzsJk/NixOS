@@ -21,6 +21,10 @@ in
         text = ''
           #!/usr/bin/env bash
 
+          # Unlock GNOME keyring (secrets store for browsers, Warp, etc.)
+          eval $(gnome-keyring-daemon --start --components=pkcs11,secrets,ssh)
+          export SSH_AUTH_SOCK
+
           # Initialise wallpaper daemon
           swww-daemon &
           sleep 1  # wait for daemon socket before setting image
