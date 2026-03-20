@@ -24,7 +24,7 @@
   in {
     nixosConfigurations.dellXps15-9530 = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
-      extraSpecialArgs = { inherit inputs; };
+      specialArgs = { inherit inputs; };
       modules = sharedModules ++ [
         ./hosts/dellXps15-9530/configuration.nix
         ./modules/01-jellyfin
@@ -34,7 +34,9 @@
         home-manager.nixosModules.home-manager {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
-          home-manager.users.jason = import ./home/jason.nix;
+          home-manager.users = {
+            jason = import ./home/jason.nix;
+          };
         }
       ];
     };
