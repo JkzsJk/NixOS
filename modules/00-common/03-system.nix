@@ -1,5 +1,5 @@
 # System-wide Nix configuration
-{ config, pkgs, inputs... }:
+{ config, pkgs, inputs, ... }:
 
 {
   # Allow unfree packages
