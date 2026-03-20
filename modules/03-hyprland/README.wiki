@@ -10,18 +10,20 @@ Hyprland Wayland compositor with companion tools.
   ├─ 00-packages.nix    - Companion packages (waybar, rofi, mako, etc.)
   ├─ 01-options.nix     - Module options (enable toggle)
   ├─ 02-hyprland.nix    - Hyprland compositor + session variables
-  └─ 03-xdg.nix         - XDG desktop portal
+  ├─ 03-xdg.nix         - XDG desktop portal
+  └─ 04-config.nix      - Hyprland user config (hyprland.conf via home-manager)
 </pre>
 
 == Packages Included ==
 
 * '''waybar''' - Status bar
-* '''rofi''' - App launcher (bind: <code>$mainMod + S</code>, rofi-wayland merged into rofi as of NixOS 25.11)
+* '''rofi''' - App launcher (bind: <code>$mainMod + D</code>, rofi-wayland merged into rofi as of NixOS 25.11)
 * '''mako''' - Notification daemon
 * '''kitty''' - Terminal emulator (Hyprland default)
 * '''wl-clipboard''' - Clipboard support (wl-copy / wl-paste)
 * '''swww''' - Wallpaper daemon
 * '''grim''' + '''slurp''' - Screenshots
+* '''jq''' - JSON processor (used for active window screenshot)
 * '''hyprlock''' - Screen lock
 * '''hypridle''' - Idle management
 * '''networkmanagerapplet''' - Network tray icon
@@ -93,10 +95,13 @@ Add to <code>~/.config/hypr/hyprland.conf</code>:
 <source lang="ini">
 $mainMod = SUPER
 
-bind = $mainMod, S, exec, rofi -show drun -show-icons
-bind = $mainMod, Return, exec, kitty
-bind = $mainMod, Q, killactive
-bind = $mainMod, M, exit
+bind = $mainMod, D,           exec, rofi -show drun
+bind = $mainMod, Return,      exec, kitty
+bind = $mainMod, Q,           killactive
+bind = $mainMod SHIFT, M,     exit
+bind = CTRL ALT, L,           exec, hyprlock
+bind = $mainMod SHIFT, F,     fullscreen, 0
+bind = $mainMod SHIFT, Print, exec, grim -g "$(slurp)" ~/Pictures/screenshot.png
 </source>
 
 == Documentation ==

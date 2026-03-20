@@ -30,6 +30,7 @@ in
       # Screenshot
       grim                   # Screenshot tool
       slurp                  # Region selection
+      jq                     # JSON processor (for active window screenshots)
 
       # Screen locking
       hyprlock               # Hyprland's lock screen

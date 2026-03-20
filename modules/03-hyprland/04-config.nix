@@ -151,27 +151,50 @@ in
         gesture = 3, horizontal, workspace  # 3-finger swipe to switch workspaces
 
         # ── Keybinds ──────────────────────────────────────────────────────────
+        # Inspired by JaKooLit/Hyprland-Dots
 
-        # Apps
+        # ── Apps ──────────────────────────────────────────────────────────────
         bind = $mainMod,       Return, exec,         $terminal
-        bind = $mainMod,       R,      exec,         $menu
+        bind = $mainMod,       D,      exec,         $menu
         bind = $mainMod,       E,      exec,         dolphin
 
-        # Window management
-        bind = $mainMod,       Q,      killactive
-        bind = $mainMod,       V,      togglefloating
-        bind = $mainMod,       P,      pseudo
-        bind = $mainMod,       J,      togglesplit
-        bind = $mainMod,       L,      exec,         hyprlock
-        bind = $mainMod SHIFT, M,      exit
+        # ── Window Management ─────────────────────────────────────────────────
+        bind = $mainMod,       Q,           killactive
+        bind = $mainMod SHIFT, Q,           killactive
+        bind = $mainMod,       V,           togglefloating
+        bind = $mainMod,       Space,       togglefloating
+        bind = $mainMod SHIFT, F,           fullscreen, 0
+        bind = $mainMod,       P,           pseudo
+        bind = $mainMod SHIFT, I,           togglesplit
+        bind = $mainMod,       G,           togglegroup
+        bind = CTRL ALT,       L,           exec, hyprlock
+        bind = CTRL ALT,       Del,         exit
+        bind = $mainMod SHIFT, M,           exit
 
-        # Focus — arrow keys
+        # ── Focus Windows ─────────────────────────────────────────────────────
         bind = $mainMod, left,  movefocus, l
         bind = $mainMod, right, movefocus, r
         bind = $mainMod, up,    movefocus, u
         bind = $mainMod, down,  movefocus, d
+        bind = ALT,      Tab,   cyclenext
+        bind = ALT,      Tab,   bringactivetotop
 
-        # Switch workspaces
+        # ── Move Windows ──────────────────────────────────────────────────────
+        bind = $mainMod CTRL, left,  movewindow, l
+        bind = $mainMod CTRL, right, movewindow, r
+        bind = $mainMod CTRL, up,    movewindow, u
+        bind = $mainMod CTRL, down,  movewindow, d
+
+        # ── Resize Windows ────────────────────────────────────────────────────
+        bind = $mainMod SHIFT, left,  resizeactive, -40 0
+        bind = $mainMod SHIFT, right, resizeactive, 40 0
+        bind = $mainMod SHIFT, up,    resizeactive, 0 -40
+        bind = $mainMod SHIFT, down,  resizeactive, 0 40
+
+        # ── Layout Toggle ─────────────────────────────────────────────────────
+        bind = $mainMod ALT, L, exec, hyprctl keyword general:layout "$(hyprctl getoption general:layout | grep -q 'dwindle' && echo master || echo dwindle)"
+
+        # ── Workspace Switching ───────────────────────────────────────────────
         bind = $mainMod, 1, workspace, 1
         bind = $mainMod, 2, workspace, 2
         bind = $mainMod, 3, workspace, 3
@@ -183,7 +206,11 @@ in
         bind = $mainMod, 9, workspace, 9
         bind = $mainMod, 0, workspace, 10
 
-        # Move active window to workspace
+        # Next/Previous workspace
+        bind = $mainMod, Tab,       workspace, e+1
+        bind = $mainMod SHIFT, Tab, workspace, e-1
+
+        # ── Move Window to Workspace (Follow) ─────────────────────────────────
         bind = $mainMod SHIFT, 1, movetoworkspace, 1
         bind = $mainMod SHIFT, 2, movetoworkspace, 2
         bind = $mainMod SHIFT, 3, movetoworkspace, 3
@@ -195,20 +222,47 @@ in
         bind = $mainMod SHIFT, 9, movetoworkspace, 9
         bind = $mainMod SHIFT, 0, movetoworkspace, 10
 
-        # Scratchpad (special workspace)
+        # Move window to workspace (Silent - no follow)
+        bind = $mainMod CTRL, 1, movetoworkspacesilent, 1
+        bind = $mainMod CTRL, 2, movetoworkspacesilent, 2
+        bind = $mainMod CTRL, 3, movetoworkspacesilent, 3
+        bind = $mainMod CTRL, 4, movetoworkspacesilent, 4
+        bind = $mainMod CTRL, 5, movetoworkspacesilent, 5
+        bind = $mainMod CTRL, 6, movetoworkspacesilent, 6
+        bind = $mainMod CTRL, 7, movetoworkspacesilent, 7
+        bind = $mainMod CTRL, 8, movetoworkspacesilent, 8
+        bind = $mainMod CTRL, 9, movetoworkspacesilent, 9
+        bind = $mainMod CTRL, 0, movetoworkspacesilent, 10
+
+        # ── Scratchpad (Special Workspace) ────────────────────────────────────
         bind = $mainMod,       U, togglespecialworkspace, magic
         bind = $mainMod SHIFT, U, movetoworkspace,        special:magic
 
-        # Scroll through workspaces with Super + mouse wheel
+        # ── Mouse Bindings ────────────────────────────────────────────────────
+        # Scroll through workspaces
         bind = $mainMod, mouse_down, workspace, e+1
         bind = $mainMod, mouse_up,   workspace, e-1
 
-        # Mouse — move and resize windows
+        # Move and resize windows
         bindm = $mainMod, mouse:272, movewindow
         bindm = $mainMod, mouse:273, resizewindow
 
-        # Screenshot — select region, save to ~/Pictures/
-        bind = , Print, exec, grim -g "$(slurp)" ~/Pictures/screenshot-$(date +%Y%m%d-%H%M%S).png
+        # ── Screenshot Keybinds ───────────────────────────────────────────────
+        # Full monitor screenshot
+        bind = $mainMod, Print, exec, grim ~/Pictures/screenshot-$(date +%Y%m%d-%H%M%S).png && notify-send "Screenshot" "Monitor captured"
+
+        # Region screenshot (select area)
+        bind = $mainMod SHIFT, Print, exec, grim -g "$(slurp)" ~/Pictures/screenshot-$(date +%Y%m%d-%H%M%S).png && notify-send "Screenshot" "Region captured"
+        bind = $mainMod SHIFT, S,     exec, grim -g "$(slurp)" ~/Pictures/screenshot-$(date +%Y%m%d-%H%M%S).png && notify-send "Screenshot" "Region captured"
+
+        # Active window screenshot
+        bind = ALT, Print, exec, grim -g "$(hyprctl activewindow -j | jq -r '\"\\(.at[0]),\\(.at[1]) \\(.size[0])x\\(.size[1])\"')" ~/Pictures/screenshot-$(date +%Y%m%d-%H%M%S).png && notify-send "Screenshot" "Window captured"
+
+        # Screenshot with timer (5 seconds)
+        bind = $mainMod CTRL, Print, exec, sleep 5 && grim ~/Pictures/screenshot-$(date +%Y%m%d-%H%M%S).png && notify-send "Screenshot" "Captured after 5s"
+
+        # Screenshot with timer (10 seconds)
+        bind = $mainMod CTRL SHIFT, Print, exec, sleep 10 && grim ~/Pictures/screenshot-$(date +%Y%m%d-%H%M%S).png && notify-send "Screenshot" "Captured after 10s"
 
         # ── Window rules ──────────────────────────────────────────────────────
         windowrulev2 = suppressevent maximize, class:.*
