@@ -24,6 +24,9 @@ Hyprland Wayland compositor with companion tools.
 * '''swww''' - Wallpaper daemon
 * '''grim''' + '''slurp''' - Screenshots
 * '''jq''' - JSON processor (used for active window screenshot)
+* '''bat''' - Syntax-highlighted file viewer (Super+H keybind hint window)
+* '''cliphist''' - Clipboard history manager (bind: <code>$mainMod + Alt + V</code>, picks via rofi)
+* '''kwallet''' + '''kwallet-pam''' + '''ksshaskpass''' - Shared KWallet keystore (credentials shared with KDE Plasma)
 * '''hyprlock''' - Screen lock
 * '''hypridle''' - Idle management
 * '''networkmanagerapplet''' - Network tray icon
@@ -85,6 +88,7 @@ These should be set in <code>02-hyprland.nix</code> via <code>environment.sessio
 ** '''NVIDIA GT 750M''' (legacy_470 driver) — no Wayland support
 ** '''Intel HD 4600''' (Haswell) — below Hyprland's stated minimums (requires Vulkan 1.1, HD 4600 only supports 1.0). May work with recent Mesa but not guaranteed.
 * '''Dual Desktop:''' Can coexist with KDE Plasma 6 — choose at SDDM login. If Hyprland fails to start, just select KDE Plasma instead.
+* '''Keyring:''' Uses KWallet (shared with KDE Plasma) — credentials persist across both sessions. KWallet is auto-unlocked by SDDM via PAM.
 * '''Audio:''' Uses existing Pipewire configuration (no duplication)
 * '''Graphics:''' Uses existing <code>hardware.graphics.enable</code> (no duplication)
 

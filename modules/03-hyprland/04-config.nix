@@ -24,6 +24,9 @@ in
           # Start KWallet daemon — shared keystore with KDE Plasma
           /run/current-system/sw/bin/kwalletd6 &
 
+          # Clipboard history — pipe all copies into cliphist store
+          wl-paste --watch cliphist store &
+
           # Initialise wallpaper daemon
           swww-daemon &
           sleep 1  # wait for daemon socket before setting image
@@ -161,6 +164,7 @@ in
         bind = $mainMod,       D,      exec,         $menu
         bind = $mainMod,       E,      exec,         dolphin
         bind = $mainMod,       H,      exec,         kitty --title "Hyprland Keybinds" bash -c "bat --style=header,grid ~/.config/hypr/hyprland.conf 2>/dev/null || cat ~/.config/hypr/hyprland.conf; echo; read -p 'Press Enter to close...'"
+        bind = $mainMod ALT,   V,      exec,         cliphist list | rofi -dmenu -p "Clipboard" | cliphist decode | wl-copy
 
         # ── Window Management ─────────────────────────────────────────────────
         bind = $mainMod,       Q,           killactive

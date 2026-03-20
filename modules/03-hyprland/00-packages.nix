@@ -11,6 +11,7 @@ in
     environment.systemPackages = with pkgs; [
       # Wayland essentials
       wl-clipboard           # Clipboard (wl-copy / wl-paste)
+      cliphist               # Clipboard history daemon (pairs with wl-clipboard + rofi)
       kitty                  # Terminal emulator (Hyprland's default)
 
       # Status bar (with experimental features enabled for calendar popup etc.)
