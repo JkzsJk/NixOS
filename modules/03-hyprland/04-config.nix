@@ -21,9 +21,8 @@ in
         text = ''
           #!/usr/bin/env bash
 
-          # Unlock GNOME keyring (secrets store for browsers, Warp, etc.)
-          eval $(gnome-keyring-daemon --start --components=pkcs11,secrets,ssh)
-          export SSH_AUTH_SOCK
+          # Start KWallet daemon — shared keystore with KDE Plasma
+          /run/current-system/sw/bin/kwalletd6 &
 
           # Initialise wallpaper daemon
           swww-daemon &

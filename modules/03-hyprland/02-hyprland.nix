@@ -25,11 +25,9 @@ in
       graphics.enable = true;
     };
 
-    # Secrets/keyring daemon — required for browser saved passwords, Warp, etc.
-    # Without this, apps using libsecret have nowhere to store credentials.
-    services.gnome.gnome-keyring.enable = true;
-
-    # Unlock the keyring automatically on SDDM login
-    security.pam.services.sddm.enableGnomeKeyring = true;
+    # Use KWallet as the secrets backend so credentials are shared with KDE Plasma.
+    # kwalletd is already present via plasma6; this wires up the libsecret bridge
+    # so non-KDE apps (Vivaldi, Warp, etc.) can use it transparently.
+    security.pam.services.sddm.kwallet.enable = true;
   };
 }

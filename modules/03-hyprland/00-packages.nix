@@ -35,9 +35,10 @@ in
       # Hint / help viewer
       bat                    # Syntax-highlighted file viewer (Super+H hint window)
 
-      # Secrets / keyring
-      gnome-keyring          # Secrets daemon (libsecret backend for browsers, Warp, etc.)
-      libsecret              # Library apps use to talk to the keyring
+      # Secrets / keyring — shared with KDE Plasma via KWallet
+      kdePackages.kwallet          # KWallet daemon (same store as Plasma)
+      kdePackages.kwallet-pam      # PAM integration (auto-unlock on login)
+      kdePackages.ksshaskpass      # SSH key agent using KWallet
 
       # Screen locking
       hyprlock               # Hyprland's lock screen
