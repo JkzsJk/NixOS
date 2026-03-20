@@ -16,7 +16,7 @@ Learning my way around NixOS.
 |-
 | 2 || SSH/Remote Acess || To Do || &nbsp;
 |-
-| 3 || Home Manager || 🚧 In Progress || Need modular user management structure, likely to be separated out into its own module.
+| 3 || Include WSL || To Do || Try to include WSL builds in this repository.
 |-
 | 4 || Immich || To Do || &nbsp;
 |-
@@ -30,7 +30,7 @@ Learning my way around NixOS.
 |-
 | 9 || .dotfiles || To Do || &nbsp;
 |-
-| 10 || Include WSL || To Do || Try to include WSL builds in this repository.
+| 10 || Home Manager || ✅ Done || Need more user(s)? Start from <code>./home</code>.
 |-
 | 11 || Neofetch || ✅ Done || &nbsp;
 |-
