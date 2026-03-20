@@ -32,6 +32,9 @@ in
       slurp                  # Region selection
       jq                     # JSON processor (for active window screenshots)
 
+      # Hint / help viewer
+      bat                    # Syntax-highlighted file viewer (Super+H hint window)
+
       # Screen locking
       hyprlock               # Hyprland's lock screen
       hypridle               # Idle management daemon

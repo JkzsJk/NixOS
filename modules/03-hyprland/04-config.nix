@@ -157,6 +157,7 @@ in
         bind = $mainMod,       Return, exec,         $terminal
         bind = $mainMod,       D,      exec,         $menu
         bind = $mainMod,       E,      exec,         dolphin
+        bind = $mainMod,       H,      exec,         kitty --title "Hyprland Keybinds" bash -c "bat --style=header,grid ~/.config/hypr/hyprland.conf 2>/dev/null || cat ~/.config/hypr/hyprland.conf; echo; read -p 'Press Enter to close...'"
 
         # ── Window Management ─────────────────────────────────────────────────
         bind = $mainMod,       Q,           killactive
@@ -267,7 +268,10 @@ in
         # ── Window rules ──────────────────────────────────────────────────────
         windowrulev2 = suppressevent maximize, class:.*
         windowrulev2 = nofocus, class:^$, title:^$, xwayland:1, floating:1, fullscreen:0, pinned:0
-      '';
+        # Hint / help window — float and centre
+        windowrulev2 = float,     title:^(Hyprland Keybinds)$
+        windowrulev2 = size 900 600, title:^(Hyprland Keybinds)$
+        windowrulev2 = center,    title:^(Hyprland Keybinds)$      '';
       };
     };
   };
