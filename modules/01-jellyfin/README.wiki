@@ -11,8 +11,7 @@ Custom Jellyfin media server module with hardware acceleration support.
   ├─ 01-options.nix  - Module options definitions
   ├─ 02-hardware.nix - Hardware acceleration configuration
   ├─ 03-access.nix   - User permissions and media library access
-  ├─ 04-service.nix  - Jellyfin service configuration
-  └─ 05-home.nix     - Home Manager config for the jellyfin system user
+  └─ 04-service.nix  - Jellyfin service configuration
 </pre>
 
 == Modules ==
@@ -44,11 +43,6 @@ Custom Jellyfin media server module with hardware acceleration support.
 * Enables official Jellyfin service
 * Configures firewall and data directory
 * Manages service settings
-
-=== 05-home.nix ===
-* Manages the <code>jellyfin</code> system user via Home Manager
-* Sets <code>home.homeDirectory</code> to <code>cfg.dataDir</code> (<code>/var/lib/jellyfin</code> by default)
-* Allows declarative config files to be placed into Jellyfin's data directory via <code>home.file</code>
 
 == Usage ==
 
@@ -390,6 +384,5 @@ sudo chmod -R 770 /srv/media
 * ✅ Secure multi-user media access via dedicated <code>media</code> group
 * ✅ Setgid on media directories — new files always inherit <code>media</code> group
 * ✅ Automatic ownership fix via systemd path watcher (<code>jellyfin-media-chown</code>)
-* ✅ Jellyfin system user managed declaratively via Home Manager
 * ✅ Optimized FFmpeg for transcoding
 * ✅ Configurable data directory
