@@ -10,6 +10,13 @@ let
 in
 {
   config = mkIf cfg.enable {
+    # Create the nix profile directory for jellyfin so home-manager activation
+    # can find a writable profile path (/nix/var/nix/profiles/per-user/jellyfin).
+    # The nix daemon normally creates this on first use, but jellyfin never runs nix.
+    systemd.tmpfiles.rules = [
+      "d /nix/var/nix/profiles/per-user/jellyfin 0755 jellyfin jellyfin -"
+    ];
+
     home-manager.users.jellyfin = {
       # jellyfin's home is its data directory, created by services.jellyfin
       # mkForce overrides home-manager's default of /var/empty for system users
