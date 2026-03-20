@@ -8,5 +8,6 @@
     ./02-hardware.nix
     ./03-access.nix
     ./04-service.nix
+    ./05-home.nix
   ];
 }

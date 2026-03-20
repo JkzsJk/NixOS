@@ -11,7 +11,8 @@ Custom Jellyfin media server module with hardware acceleration support.
   ├─ 01-options.nix  - Module options definitions
   ├─ 02-hardware.nix - Hardware acceleration configuration
   ├─ 03-access.nix   - User permissions and media library access
-  └─ 04-service.nix  - Jellyfin service configuration
+  ├─ 04-service.nix  - Jellyfin service configuration
+  └─ 05-home.nix     - Home Manager config for the jellyfin system user
 </pre>
 
 == Modules ==
@@ -35,7 +36,8 @@ Custom Jellyfin media server module with hardware acceleration support.
 * Media library access and permissions
 * Creates dedicated <code>media</code> group for secure access
 * Adds jellyfin user and configured user to <code>media</code> group
-* Sets proper permissions (0770) on media directories for multi-user write access
+* Sets permissions <code>2770</code> (setgid) on media directories — new files automatically inherit the <code>media</code> group
+* Runs a systemd path watcher + oneshot service (<code>jellyfin-media-chown</code>) that auto-fixes ownership to <code>jellyfin:media</code> whenever files are copied in by any user
 * Assertions for configuration validation
 
 === 04-service.nix ===
@@ -43,15 +45,28 @@ Custom Jellyfin media server module with hardware acceleration support.
 * Configures firewall and data directory
 * Manages service settings
 
+=== 05-home.nix ===
+* Manages the <code>jellyfin</code> system user via Home Manager
+* Sets <code>home.homeDirectory</code> to <code>cfg.dataDir</code> (<code>/var/lib/jellyfin</code> by default)
+* Allows declarative config files to be placed into Jellyfin's data directory via <code>home.file</code>
+
 == Usage ==
 
-=== Enable in host configuration: ===
+=== Enable in flake.nix: ===
+
+The module is loaded per-machine in <code>flake.nix</code>. Add it to the machine's modules list:
 
 <source lang="nix">
-imports = [
-  ../../modules/01-jellyfin
+modules = sharedModules ++ [
+  ./hosts/yourmachine/configuration.nix
+  ./modules/01-jellyfin
+  ...
 ];
+</source>
 
+Then configure it in <code>hosts/yourmachine/configuration.nix</code>:
+
+<source lang="nix">
 myServices.jellyfin = {
   enable = true;
   openFirewall = true;  # Default: true
@@ -209,8 +224,9 @@ sudo cp ~/Downloads/movie.mp4 /srv/media/
 sudo mkdir -p /srv/media/{movies,tv-shows,music}
 sudo cp movie.mp4 /srv/media/movies/
 
-# Set proper ownership (done automatically by tmpfiles, but for manual files)
-sudo chown jason:media /srv/media/movies/movie.mp4
+# Ownership is fixed automatically — the <code>jellyfin-media-chown</code> systemd watcher
+# detects new files and runs <code>chown jellyfin:media</code> on anything not already correct.
+# No manual chown needed.
 </source>
 
 === Tips: ===
@@ -342,10 +358,11 @@ myServices.jellyfin = {
 };
 </source>
 
-'''Permissions:''' Set automatically by module (jason:media, 0770)
+'''Permissions:''' Set automatically by module (jason:media, 2770)
 * Owner (jason): Read/write/execute
-* Group (media, includes jellyfin): Read/write/execute  
+* Group (media, includes jellyfin): Read/write/execute
 * Others: No access
+* Setgid bit: new files inherit <code>media</code> group automatically
 
 '''Organization:'''
 <source lang="bash">
@@ -371,5 +388,8 @@ sudo chmod -R 770 /srv/media
 * ✅ Hardware acceleration support (VA-API, NVENC, QSV, AMF)
 * ✅ Proper user permissions for GPU access
 * ✅ Secure multi-user media access via dedicated <code>media</code> group
+* ✅ Setgid on media directories — new files always inherit <code>media</code> group
+* ✅ Automatic ownership fix via systemd path watcher (<code>jellyfin-media-chown</code>)
+* ✅ Jellyfin system user managed declaratively via Home Manager
 * ✅ Optimized FFmpeg for transcoding
 * ✅ Configurable data directory

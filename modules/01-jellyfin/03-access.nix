@@ -10,9 +10,9 @@ let
   hasMediaLibraries = cfg.mediaLibraries != [];
   needsUserAccess = hasMediaLibraries || cfg.watchDownloadsFolder;
   
-  # Media directory permissions: owner rwx, group rwx, others none
-  # Allows all media group members to read/write/execute
-  mediaDirPerms = "0770";
+  # Media directory permissions: owner rwx, group rwx, others none, setgid bit
+  # setgid (2770) ensures new files always inherit the 'media' group
+  mediaDirPerms = "2770";
   
   # Only evaluate user details when actually needed
   userConfig = optionalAttrs needsUserAccess {
@@ -44,9 +44,34 @@ in
     };
 
     # Set proper permissions on media directories
-    # Directories owned by user, but group is 'media' for shared access
+    # Directories owned by user, group 'media', setgid so new files inherit group
     systemd.tmpfiles.rules = 
       map (dir: "d ${dir} ${mediaDirPerms} ${cfg.watchUsername} media -") 
       allMediaLibraries;
+
+    # Fix ownership of any file copied in by another user.
+    # Runs whenever a change is detected in any media directory.
+    systemd.services.jellyfin-media-chown = {
+      description = "Fix ownership of new media files";
+      serviceConfig = {
+        Type = "oneshot";
+        ExecStart =
+          let
+            dirs = lib.escapeShellArgs allMediaLibraries;
+            script = pkgs.writeShellScript "jellyfin-media-chown" ''
+              find ${dirs} -not \( -user jellyfin -a -group media \) \
+                -exec chown jellyfin:media {} + \
+                -exec chmod g+rw {} +
+            '';
+          in
+            "${script}";
+      };
+    };
+
+    systemd.paths.jellyfin-media-chown = {
+      description = "Watch media directories for new files";
+      wantedBy = [ "multi-user.target" ];
+      pathConfig.PathChanged = allMediaLibraries;
+    };
   };
 }
