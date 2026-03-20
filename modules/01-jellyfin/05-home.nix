@@ -12,7 +12,8 @@ in
   config = mkIf cfg.enable {
     home-manager.users.jellyfin = {
       # jellyfin's home is its data directory, created by services.jellyfin
-      home.homeDirectory = cfg.dataDir;
+      # mkForce overrides home-manager's default of /var/empty for system users
+      home.homeDirectory = lib.mkForce cfg.dataDir;
 
       # Home Manager state version — keep in sync with system stateVersion
       home.stateVersion = config.system.stateVersion;
