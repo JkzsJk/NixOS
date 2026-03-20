@@ -21,8 +21,9 @@ in
         text = ''
           #!/usr/bin/env bash
 
-          # Start KWallet daemon — shared keystore with KDE Plasma
-          /run/current-system/sw/bin/kwalletd6 &
+          # KWallet is auto-started via D-Bus activation and unlocked by SDDM via
+          # kwallet-pam at login — do NOT start kwalletd manually here or it will
+          # spawn a second, locked instance and prompt for a password.
 
           # Clipboard history — pipe all copies into cliphist store
           wl-paste --watch cliphist store &
