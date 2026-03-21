@@ -25,9 +25,12 @@ in
       graphics.enable = true;
     };
 
-    # Use KWallet as the secrets backend so credentials are shared with KDE Plasma.
-    # kwalletd is already present via plasma6; this wires up the libsecret bridge
-    # so non-KDE apps (Vivaldi, Warp, etc.) can use it transparently.
-    security.pam.services.sddm.kwallet.enable = true;
+    # Lock screen on lid close — applies to all Hyprland laptops.
+    # HandleSuspendKey/HibernateKey are intentionally left unset here;
+    # hosts running always-on services (e.g. Jellyfin) override them to "ignore".
+    services.logind.settings.Login = {
+      HandleLidSwitch         = "lock";
+      HandleLidSwitchExternalPower = "lock";
+    };
   };
 }

@@ -44,6 +44,34 @@ in
 
           # Notifications
           mako &
+
+          # Idle management (follows ~/.config/hypr/hypridle.conf)
+          hypridle &
+        '';
+      };
+
+      home.file.".config/hypr/hypridle.conf" = {
+        force = true;
+        text = ''
+          # hypridle.conf — managed by NixOS (modules/03-hyprland/04-config.nix)
+
+          general {
+              lock_cmd = hyprlock          # command to run when locking
+              after_sleep_cmd = hyprctl dispatch dpms on   # restore display after system wakes
+          }
+
+          # Step 1 — lock the screen after 5 minutes idle
+          listener {
+              timeout = 300
+              on-timeout = hyprlock
+          }
+
+          # Step 2 — turn off displays 5 minutes after locking (10 min total)
+          listener {
+              timeout = 600
+              on-timeout = hyprctl dispatch dpms off
+              on-resume  = hyprctl dispatch dpms on
+          }
         '';
       };
 

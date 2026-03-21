@@ -148,12 +148,10 @@ in
     suspendType=32
   '';
 
-  # Lid close: lock screen and turn off display (never suspend/hibernate)
-  # Prevents sleep/suspend/hibernate - keeps Jellyfin and other services running
+  # Jellyfin must stay running at all times — ignore hardware sleep/hibernate keys.
+  # Lid close locking is set in modules/03-hyprland/02-hyprland.nix.
   services.logind.settings.Login = {
-    HandleLidSwitch = "lock";
-    HandleLidSwitchExternalPower = "lock";
-    HandleSuspendKey = "ignore";
+    HandleSuspendKey   = "ignore";
     HandleHibernateKey = "ignore";
   };
 
