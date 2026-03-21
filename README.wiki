@@ -12,9 +12,9 @@ Learning my way around NixOS.
 |-
 ! &#35; !! Task !! Status !! Remarks
 |-
-| 1 || Hyprland || 🚧 In Progress || To replace KDE Plasma?
+| 1 || SSH/Remote Acess || To Do || &nbsp;
 |-
-| 2 || SSH/Remote Acess || To Do || &nbsp;
+| 2 || .dotfiles || To Do || &nbsp;
 |-
 | 3 || Include WSL || To Do || Try to include WSL builds in this repository.
 |-
@@ -28,7 +28,7 @@ Learning my way around NixOS.
 |-
 | 8 || HomeLab || To Do || &nbsp;
 |-
-| 9 || .dotfiles || To Do || &nbsp;
+| 9 || Hyprland || ✅ Done || Can choose between Hyprland, Wayland or KDE Plasma at SDDM login.
 |-
 | 10 || Home Manager || ✅ Done || Need more user(s)? Start from <code>./home</code>.
 |-
