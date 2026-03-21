@@ -12,7 +12,6 @@
     openssh
     
     # Desktop applications
-    vscode
     warp-terminal
     
     # CLI tools and utilities
@@ -31,14 +30,23 @@
     starship        # Modern, fast shell prompt with powerline-like features
   ];
 
-  # Configure VSCode to use KWallet6 for all managed users.
-  # Without this VSCode falls back to a plain-text credential store on Wayland.
-  home-manager.sharedModules = [{
-    home.file.".vscode/argv.json" = {
-      force = true;
-      text = builtins.toJSON {
-        "password-store" = "kwallet6";
-      };
+  # Configure VSCode for all managed users via home-manager.
+  # pkgs.vscode.fhs wraps VSCode in an FHS environment so native extension
+  # binaries (language servers, debuggers, etc.) work on NixOS.
+  # argv.json is written after home-manager's writeBoundary so it merges safely.
+  home-manager.sharedModules = [({ lib, ... }: {
+    programs.vscode = {
+      enable = true;
+      package = pkgs.vscode.fhs;
     };
-  }];
+
+    # Set password-store=kwallet6 in argv.json.
+    # Runs after home-manager writes files to avoid symlink conflicts.
+    home.activation.vscodeArgvJson = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      mkdir -p "$HOME/.vscode"
+      if [ ! -f "$HOME/.vscode/argv.json" ] || ! grep -q "password-store" "$HOME/.vscode/argv.json" 2>/dev/null; then
+        echo '{ "password-store": "kwallet6" }' > "$HOME/.vscode/argv.json"
+      fi
+    '';
+  })];
 }
