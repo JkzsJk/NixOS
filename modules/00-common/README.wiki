@@ -73,7 +73,7 @@ Shared configuration across all hosts.
 
 == KWallet Setup (one-time, per machine) ==
 
-KWallet auto-unlock is configured declaratively: <code>security.pam.services.login.kwallet</code> with the <code>kwallet-pam</code> package stores an unlock token at login, and <code>pam_kwallet_init</code> (called in Hyprland's <code>start.sh</code>) reads that token to silently pre-unlock the wallet. This only works if the wallet password matches the login password. This is a one-time manual step per machine:
+KWallet auto-unlock is handled automatically by <code>plasma6.nix</code> (which NixOS enables when <code>services.desktopManager.plasma6.enable = true</code>) — it configures <code>security.pam.services.login.kwallet</code> with <code>kwallet-pam</code>. In Hyprland, <code>pam_kwallet_init</code> (called in <code>start.sh</code>) reads the PAM token stored at login to silently pre-unlock the wallet. This only works if the wallet password matches the login password. This is a one-time manual step per machine:
 
 # Log into a '''KDE Plasma''' session (select at SDDM)
 # Open '''KWallet Manager''' (<code>kwalletmanager6</code>)

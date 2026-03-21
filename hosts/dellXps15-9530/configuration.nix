@@ -74,16 +74,9 @@ in
   # Enable the KDE Plasma Desktop Environment.
   services.displayManager.sddm.enable = true;
   services.desktopManager.plasma6.enable = true;
+  # plasma6.nix already configures security.pam.services.login.kwallet with kwallet-pam.
+  # pam_kwallet_init in start.sh reads that token to auto-unlock the wallet in Hyprland.
 
-  # KWallet auto-unlock for Hyprland sessions.
-  # Must use the `login` PAM service with kwallet-pam package — SDDM's PAM
-  # hardcodes `login` rules internally, so sddm.kwallet alone has no effect.
-  # pam_kwallet_init (run in start.sh) reads the PAM token and unlocks the wallet.
-  security.pam.services.login.kwallet = {
-    enable = true;
-    package = pkgs.kdePackages.kwallet-pam;
-  };
-  
   # KDE Plasma customization packages and machine-specific packages
   environment.systemPackages = with pkgs; [
     # Theme dependencies
