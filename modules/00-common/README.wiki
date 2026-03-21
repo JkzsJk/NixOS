@@ -70,3 +70,13 @@ Shared configuration across all hosts.
 * Installs LocalSend for cross-platform file transfers
 * Opens firewall ports (TCP/UDP 53317)
 * Enables multicast discovery on local network
+
+== KWallet Setup (one-time, per machine) ==
+
+KWallet auto-unlock is configured declaratively: <code>security.pam.services.login.kwallet</code> with the <code>kwallet-pam</code> package stores an unlock token at login, and <code>pam_kwallet_init</code> (called in Hyprland's <code>start.sh</code>) reads that token to silently pre-unlock the wallet. This only works if the wallet password matches the login password. This is a one-time manual step per machine:
+
+# Log into a '''KDE Plasma''' session (select at SDDM)
+# Open '''KWallet Manager''' (<code>kwalletmanager6</code>)
+# Right-click <code>kdewallet</code> → '''Change Password'''
+# Set it to your '''login password''' (same one you type at SDDM)
+# Log out → log back into Hyprland — no more prompt

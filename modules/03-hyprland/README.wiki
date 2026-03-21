@@ -88,7 +88,7 @@ These should be set in <code>02-hyprland.nix</code> via <code>environment.sessio
 ** '''NVIDIA GT 750M''' (legacy_470 driver) — no Wayland support
 ** '''Intel HD 4600''' (Haswell) — below Hyprland's stated minimums (requires Vulkan 1.1, HD 4600 only supports 1.0). May work with recent Mesa but not guaranteed.
 * '''Dual Desktop:''' Can coexist with KDE Plasma 6 — choose at SDDM login. If Hyprland fails to start, just select KDE Plasma instead.
-* '''Keyring:''' Uses KWallet (shared with KDE Plasma) — credentials persist across both sessions. KWallet is auto-unlocked by SDDM via PAM.
+* '''Keyring:''' Uses KWallet (shared with KDE Plasma). KWallet is auto-unlocked at SDDM login via PAM (<code>security.pam.services.login.kwallet</code> with <code>kwallet-pam</code> package). <code>pam_kwallet_init</code> runs in <code>start.sh</code> to read the PAM token and pre-unlock the wallet before any app requests it via D-Bus. For this to work silently, the wallet password must match your login password — see the KWallet Setup section in <code>modules/00-common/README.wiki</code> for the one-time setup steps.
 * '''Audio:''' Uses existing Pipewire configuration (no duplication)
 * '''Graphics:''' Uses existing <code>hardware.graphics.enable</code> (no duplication)
 

@@ -75,10 +75,14 @@ in
   services.displayManager.sddm.enable = true;
   services.desktopManager.plasma6.enable = true;
 
-  # Auto-unlock KWallet using the login password when SDDM logs in.
-  # This allows VSCode, Vivaldi, and other apps to use KWallet without
-  # a separate password prompt. kwalletd starts on-demand via D-Bus.
-  security.pam.services.sddm.kwallet.enable = true;
+  # KWallet auto-unlock for Hyprland sessions.
+  # Must use the `login` PAM service with kwallet-pam package — SDDM's PAM
+  # hardcodes `login` rules internally, so sddm.kwallet alone has no effect.
+  # pam_kwallet_init (run in start.sh) reads the PAM token and unlocks the wallet.
+  security.pam.services.login.kwallet = {
+    enable = true;
+    package = pkgs.kdePackages.kwallet-pam;
+  };
   
   # KDE Plasma customization packages and machine-specific packages
   environment.systemPackages = with pkgs; [

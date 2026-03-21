@@ -21,10 +21,10 @@ in
         text = ''
           #!/usr/bin/env bash
 
-          # Start KWallet daemon. In Hyprland (non-KDE session) it is not started
-          # automatically. kwallet-pam ran at SDDM login and stored an unlock token,
-          # so kwalletd6 will open the wallet silently — no password prompt.
-          /run/current-system/sw/bin/kwalletd6 &
+          # Unlock KWallet using the PAM token stored by SDDM at login.
+          # pam_kwallet_init reads the token and opens the wallet silently.
+          # kwalletd6 is then activated on-demand via D-Bus with the wallet pre-unlocked.
+          ${pkgs.kdePackages.kwallet-pam}/libexec/pam_kwallet_init &
 
           # Clipboard history — pipe all copies into cliphist store
           wl-paste --watch cliphist store &
