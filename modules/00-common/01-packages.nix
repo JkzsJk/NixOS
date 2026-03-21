@@ -31,4 +31,12 @@
     # Shell customization
     starship        # Modern, fast shell prompt with powerline-like features
   ];
+
+  # Configure VSCode to use KWallet6 for all managed users.
+  # Without this VSCode falls back to a plain-text credential store on Wayland.
+  home-manager.sharedModules = [{
+    home.file.".vscode/argv.json".text = builtins.toJSON {
+      "password-store" = "kwallet6";
+    };
+  }];
 }

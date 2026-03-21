@@ -13,6 +13,7 @@
     --ozone-platform=wayland
     --enable-features=WaylandWindowDecorations
     --enable-wayland-ime
+    --password-store=kwallet6
   '';
 
   xdg.mime.defaultApplications = {

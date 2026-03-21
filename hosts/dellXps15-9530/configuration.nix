@@ -74,6 +74,11 @@ in
   # Enable the KDE Plasma Desktop Environment.
   services.displayManager.sddm.enable = true;
   services.desktopManager.plasma6.enable = true;
+
+  # Auto-unlock KWallet using the login password when SDDM logs in.
+  # This allows VSCode, Vivaldi, and other apps to use KWallet without
+  # a separate password prompt. kwalletd starts on-demand via D-Bus.
+  security.pam.services.sddm.kwallet.enable = true;
   
   # KDE Plasma customization packages and machine-specific packages
   environment.systemPackages = with pkgs; [
