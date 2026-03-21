@@ -1,7 +1,7 @@
 # Hyprland user config — writes ~/.config/hypr/hyprland.conf via home-manager.
 # Edit this file instead of ~/.config/hypr/hyprland.conf directly; it is the
 # declarative, NixOS-managed equivalent of what the installer generates.
-{ config, lib, ... }:
+{ config, lib, pkgs, ... }:
 
 with lib;
 
