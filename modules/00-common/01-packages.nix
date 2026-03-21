@@ -12,7 +12,6 @@
     openssh
     
     # Desktop applications
-    vivaldi
     vscode
     warp-terminal
     

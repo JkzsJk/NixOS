@@ -2,19 +2,22 @@
 { config, pkgs, inputs, ... }:
 
 {
+  # Install Vivaldi with kwallet6 baked in via package override (NixOS wiki approach).
+  # commandLineArgs is the correct way to pass flags on NixOS — vivaldi-flags.conf
+  # is not reliably read from /etc on NixOS.
+  environment.systemPackages = [
+    (pkgs.vivaldi.override {
+      commandLineArgs = [
+        "--ozone-platform=wayland"
+        "--enable-features=WaylandWindowDecorations"
+        "--enable-wayland-ime"
+        "--password-store=kwallet6"
+      ];
+    })
+  ];
+
   # Set Vivaldi as default browser
   environment.sessionVariables.BROWSER = "vivaldi";
-
-  # Force Vivaldi to run natively on Wayland (instead of XWayland).
-  # --ozone-platform=wayland  — use the Wayland backend
-  # --enable-features=WaylandWindowDecorations — use server-side decorations
-  # --enable-wayland-ime  — fix input method (e.g. emoji, special chars) on Wayland
-  environment.etc."vivaldi-flags.conf".text = ''
-    --ozone-platform=wayland
-    --enable-features=WaylandWindowDecorations
-    --enable-wayland-ime
-    --password-store=kwallet6
-  '';
 
   xdg.mime.defaultApplications = {
     "text/html" = "vivaldi-stable.desktop";
