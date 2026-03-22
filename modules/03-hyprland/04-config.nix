@@ -50,6 +50,15 @@ in
         '';
       };
 
+      home.file.".config/kitty/kitty.conf" = {
+        force = true;
+        text = ''
+          # kitty.conf — managed by NixOS (modules/03-hyprland/04-config.nix)
+
+          background_opacity 0.85
+        '';
+      };
+
       home.file.".config/hypr/hypridle.conf" = {
         force = true;
         text = ''
