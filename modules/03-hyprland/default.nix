@@ -6,5 +6,6 @@
     ./02-hyprland.nix
     ./03-xdg.nix
     ./04-config.nix
+    ./05-wayvnc.nix
   ];
 }

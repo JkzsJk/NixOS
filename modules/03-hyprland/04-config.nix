@@ -47,6 +47,11 @@ in
 
           # Idle management (follows ~/.config/hypr/hypridle.conf)
           hypridle &
+
+          # VNC server — listens on localhost:5900 only.
+          # Remote access: tunnel via "ssh -L 5900:localhost:5900 <user>@<host>"
+          # then connect any VNC client to localhost:5900.
+          wayvnc 127.0.0.1 5900 &
         '';
       };
 

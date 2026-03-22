@@ -282,6 +282,12 @@ in
       kdePackages.kate
     #  thunderbird
     ];
+    # SSH public keys for key-only auth (password auth is disabled).
+    # Add the public key from each client machine here.
+    openssh.authorizedKeys.keys = [
+      # macOS machine — get with: cat ~/.ssh/id_ed25519.pub
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEna0onnXpJpauK+beF0UOkecZfPojU/OrRn+0KDHNHn jkzs-mac"
+    ];
   };
   # Allow jason to run nixos-rebuild and nix commands without sudo password
   security.sudo.extraRules = [
@@ -320,8 +326,17 @@ in
 
   # List services that you want to enable:
 
-  # Enable the OpenSSH daemon.
-  services.openssh.enable = true;
+  # SSH — key-only, no password auth, no root login.
+  # Local access: ssh jason@dellXps15-9530.local (or IP)
+  # Remote access: tunnel via Tailscale (see below), then use same SSH command.
+  services.openssh = {
+    enable = true;
+    settings = {
+      PasswordAuthentication = false;  # Keys only — brute-force safe
+      PermitRootLogin        = "no";
+      X11Forwarding          = false;
+    };
+  };
 
   # Enable Jellyfin media server
   myServices.jellyfin = {
@@ -365,6 +380,15 @@ in
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
   networking.firewall.enable = true;  # Keep firewall enabled for security
+
+  # Tailscale — encrypted WireGuard mesh VPN for secure remote access.
+  # After rebuild, run once: sudo tailscale up
+  # Then SSH/VNC work over Tailscale IP as if you're on the same LAN.
+  services.tailscale = {
+    enable = true;
+    # Allow Tailscale traffic through the firewall
+    openFirewall = true;
+  };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

@@ -12,7 +12,7 @@ Learning my way around NixOS.
 |-
 ! &#35; !! Task !! Status !! Remarks
 |-
-| 1 || SSH/Remote Acess || To Do || &nbsp;
+| 1 || SSH/Remote Access || To Do || &nbsp;
 |-
 | 2 || .dotfiles || To Do || &nbsp;
 |-
