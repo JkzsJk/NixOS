@@ -232,6 +232,12 @@ in
         bind = $mainMod CTRL, up,    movewindow, u
         bind = $mainMod CTRL, down,  movewindow, d
 
+        # ── Swap Windows ──────────────────────────────────────────────────────
+        bind = $mainMod ALT, left,  swapwindow, l
+        bind = $mainMod ALT, right, swapwindow, r
+        bind = $mainMod ALT, up,    swapwindow, u
+        bind = $mainMod ALT, down,  swapwindow, d
+
         # ── Resize Windows ────────────────────────────────────────────────────
         bind = $mainMod SHIFT, left,  resizeactive, -40 0
         bind = $mainMod SHIFT, right, resizeactive, 40 0
