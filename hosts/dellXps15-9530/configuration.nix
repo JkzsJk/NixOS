@@ -285,8 +285,8 @@ in
     # SSH public keys for key-only auth (password auth is disabled).
     # Add the public key from each client machine here.
     openssh.authorizedKeys.keys = [
-      # macOS machine — get with: cat ~/.ssh/id_ed25519.pub
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEna0onnXpJpauK+beF0UOkecZfPojU/OrRn+0KDHNHn jkzs-mac"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINx2wJZRiTAG9CGgJRtiHjriqwKGRUtG83x4fQp2uy5N jk"
     ];
   };
   # Allow jason to run nixos-rebuild and nix commands without sudo password
