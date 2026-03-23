@@ -21,8 +21,7 @@ in
 {
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
-      wayvnc   # VNC server for wlroots/Hyprland
-      tigervnc # VNC client (for connecting to other machines from this one)
+      wayvnc   # VNC server for wlroots/Hyprland; any VNC client (TigerVNC, RealVNC, etc.) works on the connecting side
     ];
 
     # wayvnc itself needs no firewall port — it listens on localhost only.

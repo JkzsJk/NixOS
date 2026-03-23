@@ -32,7 +32,6 @@ Hyprland Wayland compositor with companion tools.
 * '''hypridle''' - Idle management
 * '''networkmanagerapplet''' - Network tray icon
 * '''wayvnc''' - VNC server for full desktop remote access (tunnelled via SSH/Tailscale)
-* '''tigervnc''' - VNC client (for connecting to other machines from this one)
 
 == Usage ==
 
