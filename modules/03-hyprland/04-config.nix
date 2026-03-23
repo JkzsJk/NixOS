@@ -48,10 +48,17 @@ in
           # Idle management (follows ~/.config/hypr/hypridle.conf)
           hypridle &
 
-          # VNC server — listens on localhost:5900 only.
+          # Create the virtual headless output used by wayvnc.
+          # The monitor= line in hyprland.conf configures it at 1920x1080@60 scale=1.
+          # Must run before wayvnc so the output exists when wayvnc attaches.
+          hyprctl output create headless
+
+          # VNC server — captures HEADLESS-1 (virtual 1920×1080, scale=1).
+          # This avoids HiDPI scaling artefacts from the physical eDP-1 display.
           # Remote access: tunnel via "ssh -L 5900:localhost:5900 <user>@<host>"
           # then connect any VNC client to localhost:5900.
-          wayvnc 127.0.0.1 5900 &
+          # Workspace 10 is pinned to HEADLESS-1 — switch to it inside VNC.
+          wayvnc --output=HEADLESS-1 127.0.0.1 5900 &
         '';
       };
 
@@ -102,6 +109,12 @@ in
         # Scale: 1 = native, 1.5 = 150% (2133x1200 effective), 2 = 200% (1600x900 effective)
         ## This is for Dell XPS 15 9530's 3K display; adjust as needed for your setup!
         monitor=eDP-1,3200x1800@60,0x0,1.25
+
+        # Virtual headless output for wayvnc --- gives VNC a clean 1920×1080
+        # canvas at scale=1, fully independent of the HiDPI physical display.
+        # Workspaces placed here (e.g. workspace 10) are only visible via VNC.
+        monitor=HEADLESS-1,1920x1080@60,auto,1
+        workspace=10,monitor:HEADLESS-1,default:true
 
         # ── Autostart ─────────────────────────────────────────────────────────
         exec-once = bash ~/.config/hypr/start.sh

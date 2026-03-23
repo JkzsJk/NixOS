@@ -113,6 +113,51 @@ bind = $mainMod SHIFT, F,     fullscreen, 0
 bind = $mainMod SHIFT, Print, exec, grim -g "$(slurp)" ~/Pictures/screenshot.png
 </source>
 
+== Remote Access ==
+
+Full desktop remote access is provided by <code>wayvnc</code> (starts automatically with Hyprland via <code>start.sh</code>). It listens on <code>localhost:5900</code> only — never exposed directly. Access is tunnelled through SSH (local) or Tailscale+SSH (internet).
+
+'''Prerequisites:'''
+* SSH key added to <code>users.users.jason.openssh.authorizedKeys.keys</code> in <code>configuration.nix</code>
+* Tailscale running on both machines (<code>sudo tailscale up</code> on Dell; install Tailscale app on client)
+* VNC client on client (e.g. TigerVNC: <code>brew install --cask tigervnc-viewer</code> on macOS)
+
+'''Local network:'''
+<source lang="bash">
+# Open tunnel (keep terminal open)
+ssh -L 5900:localhost:5900 jason@dellXps15-9530.local
+# Connect VNC client to: localhost:5900
+</source>
+
+'''Remote (over internet via Tailscale):'''
+<source lang="bash">
+# Get Tailscale IP on the Dell first:
+tailscale ip -4
+
+# Open tunnel via Tailscale IP
+ssh -L 5900:localhost:5900 jason@<tailscale-ip>
+# Connect VNC client to: localhost:5900
+</source>
+
+'''Recommended macOS <code>~/.ssh/config</code> entries:'''
+<source lang="text">
+Host dellxps
+    HostName dellXps15-9530.local
+    User jason
+    IdentityFile ~/.ssh/id_jkzs-mac
+    LocalForward 5900 localhost:5900
+
+Host dellxps-remote
+    HostName <tailscale-ip>
+    User jason
+    IdentityFile ~/.ssh/id_jkzs-mac
+    LocalForward 5900 localhost:5900
+</source>
+
+Then: <code>ssh dellxps</code> or <code>ssh dellxps-remote</code>, then connect VNC to <code>localhost:5900</code>.
+
+'''Note:''' wayvnc only starts after logging into Hyprland at SDDM — there is nothing to connect to at the login screen.
+
 == Documentation ==
 
 Based on:
