@@ -57,7 +57,7 @@ Learning my way around NixOS.
 |-
 | 1 || Hyprland Lid configuration || To Do || Hyprland not respecting lid close currently.
 |-
-| 2 || Jellyfin Plugins || To Do || Must-have plugins & to codify them too (as part of <code>01-jellyfin</code> module).
+| 2 || Jellyfin Plugins || 🚧 In Progress || Must-have plugins & to codify them too (as part of <code>01-jellyfin</code> module).
 |-
 | 3 || Versions (Auto) Upgrade || To Do || Figure out how to enable auto version upgrade for the OS and applications.
 |-
