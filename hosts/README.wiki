@@ -34,6 +34,9 @@ First experimental HomeLab machine.
 * Jellyfin media server with secure multi-user access
 * Passwordless sudo for nixos-rebuild and trusted nix user configuration
 * HomeLab power management: No sleep/suspend/hibernate, screen locks after 5 minutes
+* SSH hardened (key-only, no password auth, no root login)
+* Tailscale VPN for secure remote access over the internet
+* wayvnc full desktop remote access (tunnelled via SSH/Tailscale)
 
 == Adding a New Host ==
 

@@ -5,7 +5,9 @@
 { config, pkgs, inputs, ... }:
 
 let
-  primaryUser = "jason";
+  primaryUser      = "jason";       # Password managed imperatively with: sudo passwd jason
+  primaryUserDesc  = "Jason K.";
+  tailscaleEnabled = false;         # Set to true to enable Tailscale VPN; run `sudo tailscale up` after rebuild
 in
 {
   imports =
@@ -274,23 +276,20 @@ in
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.${primaryUser} = {
     isNormalUser = true;
-    description = "Jason K.";
+    description = primaryUserDesc;
     extraGroups = [ "networkmanager" "wheel" "media" ];
-    # Password managed imperatively with: sudo passwd jason
     # Or use hashedPassword = "..." with output from: mkpasswd -m sha-512
     packages = with pkgs; [
       kdePackages.kate
-    #  thunderbird
     ];
     # SSH public keys for key-only auth (password auth is disabled).
     # Add the public key from each client machine here.
     openssh.authorizedKeys.keys = [
-      # macOS machine — get with: cat ~/.ssh/id_ed25519.pub
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEna0onnXpJpauK+beF0UOkecZfPojU/OrRn+0KDHNHn jkzs-mac"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINx2wJZRiTAG9CGgJRtiHjriqwKGRUtG83x4fQp2uy5N jk"
     ];
   };
-  # Allow jason to run nixos-rebuild and nix commands without sudo password
-  security.sudo.extraRules = [
+  security.sudo.extraRules = [    # To run nixos-rebuild and nix commands without sudo password
     {
       users = [ primaryUser ];
       commands = [
@@ -382,12 +381,12 @@ in
   networking.firewall.enable = true;  # Keep firewall enabled for security
 
   # Tailscale — encrypted WireGuard mesh VPN for secure remote access.
-  # After rebuild, run once: sudo tailscale up
+  # Toggle: set tailscaleEnabled = true in the let block at the top, then rebuild.
+  # After enabling, run once: sudo tailscale up
   # Then SSH/VNC work over Tailscale IP as if you're on the same LAN.
   services.tailscale = {
-    enable = true;
-    # Allow Tailscale traffic through the firewall
-    openFirewall = true;
+    enable      = tailscaleEnabled;
+    openFirewall = tailscaleEnabled;
   };
 
   # This value determines the NixOS release from which the default
