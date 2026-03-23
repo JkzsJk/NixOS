@@ -29,15 +29,15 @@ let
   plugins = [
     {
       name    = "TVDBPlugin";
-      version = ""; # e.g. "5.0.0.0" — check: https://github.com/jellyfin/jellyfin-plugin-tvdb/releases/latest
-      url     = ""; # e.g. "https://github.com/jellyfin/jellyfin-plugin-tvdb/releases/download/v5.0.0/tvdb_5.0.0.0.zip"
-      sha256  = lib.fakeHash; # replace with output of: nix-prefetch-url --type sha256 <url>
+      version = "20.0.0.0"; # e.g. "20.0.0.0" — check: https://github.com/jellyfin/jellyfin-plugin-tvdb/releases/latest
+      url     = "https://github.com/jellyfin/jellyfin-plugin-tvdb/releases/download/v20/thetvdb_20.0.0.0.zip"; # e.g. "https://github.com/jellyfin/jellyfin-plugin-tvdb/releases/download/v20/thetvdb_20.0.0.0.zip"
+      sha256  = "0qzkkb0lwb4d5fafr6xykzz6rhxrgrjn6pvp64vml8ys0fib65vd"; # replace with output of: nix-prefetch-url --type sha256 <url>
     }
     {
       name    = "intro-skipper";
-      version = ""; # e.g. "10.10.3.0" — check: https://github.com/intro-skipper/intro-skipper/releases/latest
-      url     = ""; # e.g. "https://github.com/intro-skipper/intro-skipper/releases/download/10.10.3.0/intro-skipper-10.10.3.0.zip"
-      sha256  = lib.fakeHash; # replace with output of: nix-prefetch-url --type sha256 <url>
+      version = "1.10.11.16"; # e.g. "10.10.3.0" — check: https://github.com/intro-skipper/intro-skipper/releases/latest
+      url     = "https://github.com/intro-skipper/intro-skipper/releases/download/10.11%2Fv1.10.11.16/intro-skipper-v1.10.11.16.zip"; # e.g. "https://github.com/intro-skipper/intro-skipper/releases/download/10.11%2Fv1.10.11.16/intro-skipper-v1.10.11.16.zip"
+      sha256  = "0437xg96yzwq63pwdif4qlz2g95gs1pcy28xjr9b6k3sn2v43p45"; # replace with output of: nix-prefetch-url --type sha256 <url>
     }
   ];
 
