@@ -57,13 +57,15 @@ Learning my way around NixOS.
 |-
 | 1 || Hyprland Lid configuration || To Do || Hyprland not respecting lid close currently.
 |-
-| 2 || Versions (Auto) Upgrade || To Do || Figure out how to enable auto version upgrade for the OS and applications.
+| 2 || Hyprland Configuration || To Do || Monitor/display settings are configured specifically for <code>dellXps15-9530</code>, as part of the module. It should be separated (i.e. default settings remain in the module while device specific ones goes to the machine's Flake or <code>configuration.nix</code>).
 |-
-| 3 || Fix variables structure || To Do || You know how you can put all variables into a single file in Terraform?
+| 3 || Versions (Auto) Upgrade || To Do || Figure out how to enable auto version upgrade for the OS and applications.
 |-
-| 4 || Jellyfin Plugins || ✅ Done || Must-have plugins & to codify them too (as part of <code>01-jellyfin</code> module).
+| 4 || Fix variables structure || To Do || You know how you can put all variables into a single file in Terraform?
 |-
-| 5 || Jellyfin Directory || ✅ Done || Include <code>shows</code> directory into the code.
+| 5 || Jellyfin Plugins || ✅ Done || Must-have plugins & to codify them too (as part of <code>01-jellyfin</code> module).
+|-
+| 6 || Jellyfin Directory || ✅ Done || Include <code>shows</code> directory into the code.
 |}
 
 == References ==

@@ -108,7 +108,7 @@ in
         # Use "hyprctl monitors" to list available monitors.
         # Scale: 1 = native, 1.5 = 150% (2133x1200 effective), 2 = 200% (1600x900 effective)
         ## This is for Dell XPS 15 9530's 3K display; adjust as needed for your setup!
-        monitor=eDP-1,3200x1800@60,0x0,1.25
+        monitor=eDP-1,3200x1800@60,0x0,1.25, bitdepth, 10
 
         # Virtual headless output for wayvnc --- gives VNC a clean 1920×1080
         # canvas at scale=1, fully independent of the HiDPI physical display.
